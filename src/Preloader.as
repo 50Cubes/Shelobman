@@ -6,7 +6,7 @@ package
 	{
 		public function Preloader()
 		{
-			className = "PathFindingDemo";
+			className = "Shelobman";
 			super();
 		}
 	}
