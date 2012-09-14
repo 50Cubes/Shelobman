@@ -1,9 +1,8 @@
-
 package
 {
 	import flash.display.Sprite;
 	
-	import org.flixel.FlxG;
+	import org.flixel.*;
 	
 	
 	/**
@@ -13,7 +12,10 @@ package
 	 * @email 73@50cubes.com
 	 * @since Sep 13, 2012
 	 */
-	public class Shelobman extends Sprite
+		
+	[SWF(width="400", height="300", backgroundColor="#000000")]
+	[Frame(factoryClass="Preloader")]
+	public class Shelobman extends FlxGame
 	{
 		
 		//--------------------------------------
@@ -31,7 +33,7 @@ package
 		//--------------------------------------
 		public function Shelobman()
 		{
-			FlxG.switchState(new PlayState());
+			super(400, 300, MenuState, 1, 20, 20);
 		}
 		
 		//--------------------------------------

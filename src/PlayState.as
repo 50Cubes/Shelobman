@@ -1,154 +1,206 @@
 package
 {
-	import org.flixel.FlxButton;
-	import org.flixel.FlxCamera;
-	import org.flixel.FlxG;
-	import org.flixel.FlxObject;
-	import org.flixel.FlxSprite;
-	import org.flixel.FlxState;
-	import org.flixel.FlxTilemap;
+	import org.flixel.*;
+	import flash.display.Graphics;
 
 	public class PlayState extends FlxState
 	{
-		private var level:FlxTilemap;
-		private var player1:FlxSprite;
-		private var player2:FlxSprite;
-
+		/*
+		 * Tile width
+		 */
+		private const TILE_WIDTH:int = 12;
+		/*
+		 * Tile height
+		 */
+		private const TILE_HEIGHT:int = 12;
+		
+		/*
+		 * Unit value for action go
+		 */
+		private const ACTION_GO:int = 1;
+		/*
+		 * Unit value for action idle
+		 */
+		private const ACTION_IDLE:int = 0;
+		
+		/*
+		 * Embed tile image
+		 */
+		[Embed(source = 'assets/tiles.png')] private var _imgTiles:Class;
+		/*
+		 * Embed map data
+		 */
+		[Embed(source = 'assets/pathfinding_map.txt', mimeType = "application/octet-stream")] private var _dataMap:Class;
+		/*
+		 * Map
+		 */
+		private var _map:FlxTilemap;
+		
+		/*
+		 * Goal sprite
+		 */
+		private var _goal:FlxSprite;
+		
+		/*
+		 * Unit sprite
+		 */
+		private var _unit:FlxSprite;
+		/*
+		 * Unit action
+		 */
+		private var _action:int;
+		
+		/*
+		 * Button to move unit to Goal
+		 */
+		private var _btnFindPath:FlxButton;
+		/*
+		 * Button to stop unit
+		 */
+		private var _btnStopUnit:FlxButton;
+		/*
+		 * Button to reset unit to start point
+		 */
+		private var _btnResetUnit:FlxButton;
+		/*
+		 * Button quit
+		 */
+		private var _btnQuit:FlxButton;
+		/*
+		 * Legend
+		 */
+		private var _legends:FlxText;
+		
 		override public function create():void
 		{
 			FlxG.framerate = 50;
 			FlxG.flashFramerate = 50;
-
-			// set the background color to white
-			FlxG.bgColor = 0xffffffff;
-
-			//Setup the level (40 x 40 tiles) Addapted from Adam Atomic's EZPlatformer
-			var levelData:Array = new Array(
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1,
-				1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
-				1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
-				1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1,
-				1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
-
-			// Create the tilemap from the levelData we just created
-			level = new FlxTilemap();
-			level.loadMap(FlxTilemap.arrayToCSV(levelData, 40), FlxTilemap.ImgAuto,0,0,FlxTilemap.AUTO);
-			add(level);
-
-			//Create the two players
-			player1 = new FlxSprite(65, 200).makeGraphic(10,12, 0xFFFF0000); //player 1 is red and starts at 65, 200
-			player1.maxVelocity.x = 80;   // Theses are pysics settings,
-			player1.maxVelocity.y = 200;  // controling how the players behave
-			player1.acceleration.y = 200; // in the game
-			player1.drag.x = player1.maxVelocity.x*4;
-			add(player1);
-
-			player2 = new FlxSprite(265, 200).makeGraphic(10,12, 0xFF0000FF); // player2 is blue and starts at 265, 200
-			player2.maxVelocity.x = 80; // Same thing than player 1
-			player2.maxVelocity.y = 200;
-			player2.acceleration.y = 200;
-			player2.drag.x = player2.maxVelocity.x*4;
-			add(player2);
-
-
-			// Then we setup two cameras to follow each of the two players
-
-			var cam:FlxCamera = new FlxCamera(0,0, FlxG.width/2, FlxG.height); // we put the first one in the top left corner
-			cam.follow(player2);
-			// this sets the limits of where the camera goes so that it doesn't show what's outside of the tilemap
-			cam.setBounds(0,0,level.width, level.height);
-			cam.color = 0xFFCCCC; // add a light red tint to the camera to differentiate it from the other
-			FlxG.addCamera(cam);
-
-			// Almost the same thing as the first camera
-			cam = new FlxCamera(FlxG.width/2,0, FlxG.width/2, FlxG.height);    // and the second one in the top middle of the screen
-			cam.follow(player1);
-			cam.setBounds(0,0,level.width, level.height);
-			cam.color = 0xCCCCFF; // Add a light blue tint to the camera
-			FlxG.addCamera(cam);
-
-			// add quit button
-			var quitBtn:FlxButton = new FlxButton(1000, 1000, "Quit", onQuit); //put the button out of screen so we don't see in the two other cameras
-			add(quitBtn);
-
-			// Create a camera focused on the quit button.
-			// We do this because we don't want the quit button to be
-			// tinted by the other cameras.
-			cam = new FlxCamera(2, 2, quitBtn.width, quitBtn.height);
-			cam.follow(quitBtn);
-			FlxG.addCamera(cam);
+			
+			//Load _datamap to _map and add to PlayState
+			_map = new FlxTilemap();
+			_map.loadMap(new _dataMap, _imgTiles, TILE_WIDTH, TILE_HEIGHT, 0, 1);
+			add(_map);
+			
+			//Set goal coordinate and add goal to PlayState
+			_goal = new FlxSprite(_map.width - TILE_WIDTH, _map.height - TILE_HEIGHT).makeGraphic(TILE_WIDTH, TILE_HEIGHT, 0xffffff00);
+			add(_goal);
+			
+			//Set unit smaller than tile so when following path not collide with map and add unit to PlayState
+			_unit  = new FlxSprite(0, 0).makeGraphic(TILE_WIDTH - 2, TILE_HEIGHT - 2, 0xffff0000);
+			_action = ACTION_IDLE;
+			add(_unit);
+			
+			//Add button move to goal to PlayState
+			_btnFindPath = new FlxButton(320, 10, "Move To Goal", moveToGoal);
+			add(_btnFindPath);
+			
+			//Add button stop unit to PlayState
+			_btnStopUnit = new FlxButton(320, 30, "Stop Unit", stopUnit);
+			add(_btnStopUnit);
+			
+			//Add button reset unit to PlayState
+			_btnResetUnit = new FlxButton(320, 50, "Reset Unit", resetUnit);
+			add(_btnResetUnit);
+			
+			//Add button quit to PlayState
+			_btnQuit = new FlxButton(320, 70, "Quit", backToMenu);
+			add(_btnQuit);
+			
+			//Add label for legend
+			_legends = new FlxText(320, 90, 100, "Click in map to\nplace or\nremove tile\n\nLegends:\nRed:Unit\nYellow:Goal\nBlue:Wall\nWhite:Path");
+			add(_legends);
 		}
-
+		
+		override public function draw():void
+		{
+			super.draw();
+			
+			//To draw path
+			if (_unit.path != null)
+			{
+				_unit.path.drawDebug();
+			}
+		}
+		
+		override public function destroy():void
+		{
+			super.destroy();
+			_map = null;
+			_goal = null;
+			_unit = null;
+			_btnFindPath = null;
+			_btnStopUnit = null;
+			_btnResetUnit = null;
+			_btnQuit = null;
+			_legends = null;
+		}
+		
 		override public function update():void
 		{
-			// collide everything
-			FlxG.collide();
-
-			//player 1 controls
-			player1.acceleration.x = 0;
-
-			if(FlxG.keys.LEFT)
-				player1.acceleration.x = -player1.maxVelocity.x*4;
-			if(FlxG.keys.RIGHT)
-				player1.acceleration.x = player1.maxVelocity.x*4;
-			if(FlxG.keys.justPressed("UP") && player1.isTouching(FlxObject.FLOOR))
-				player1.velocity.y -= player1.maxVelocity.y/1.5;
-
-			//player 2 controls
-			player2.acceleration.x = 0;
-
-			if(FlxG.keys.A)
-				player2.acceleration.x = -player2.maxVelocity.x*4;
-			if(FlxG.keys.D)
-				player2.acceleration.x = player2.maxVelocity.x*4;
-			if(FlxG.keys.justPressed("W") && player2.isTouching(FlxObject.FLOOR))
-				player2.velocity.y -= player2.maxVelocity.y/1.5;
-
 			super.update();
-
+			
+			//Set unit to collide with map
+			FlxG.collide(_unit, _map);
+			
+			//Check mouse pressed and unit action
+			if (FlxG.mouse.justPressed() && _action == ACTION_IDLE) 
+			{
+				//Get data map coordinate
+				var mx:int = FlxG.mouse.screenX / TILE_WIDTH;
+				var my:int = FlxG.mouse.screenY / TILE_HEIGHT;
+				
+				//Change tile toogle
+				_map.setTile(mx, my, 1 - _map.getTile(mx, my), true);
+			}
+			
+			//Check if reach goal
+			if (_action == ACTION_GO)
+			{
+				if (_unit.pathSpeed == 0)
+				{
+					stopUnit();
+				}
+			}
 		}
-
-		// function called when the quit button is pressed
-		private function onQuit():void
+		
+		private function moveToGoal():void
 		{
-			trace("hahaha");
-			// Go back to the MenuState
-			//FlxG.switchState(new MenuState);
+			if (_action == ACTION_IDLE)
+			{	
+				//Find path to goal
+				var path:FlxPath = _map.findPath(new FlxPoint(_unit.x + _unit.width / 2, _unit.y + _unit.height / 2), new FlxPoint(_goal.x + _goal.width / 2, _goal.y + _goal.height / 2));
+				
+				//Tell unit to follow path
+				_unit.followPath(path);
+				_action = ACTION_GO;
+			}
+		}
+		
+		private function stopUnit():void
+		{
+			//Stop unit and destroy unit path
+			_action = ACTION_IDLE;
+			_unit.stopFollowingPath(true);
+			_unit.velocity.x = _unit.velocity.y = 0;
+		}
+		
+		private function resetUnit():void
+		{
+			//Reset _unit position
+			_unit.x = 0;
+			_unit.y = 0;
+			
+			//Stop unit
+			if (_action == ACTION_GO)
+			{
+				stopUnit();
+			}
+		}
+		
+		private function backToMenu():void
+		{
+			//Back to MenuState
+			FlxG.switchState(new MenuState());
 		}
 	}
 }
