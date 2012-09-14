@@ -63,26 +63,27 @@ package com.spiders.hero
 		// PUBLIC METHODS
 		//--------------------------------------
 		
-		/*
-		override public function followPath(Path:FlxPath, Speed:Number=100, Mode:uint=PATH_FORWARD, AutoRotate:Boolean=false):void{
-			if(animState != ANIM_RUN){
-				animState = ANIM_RUN;
-				this.play(ANIM_RUN);
-			}
+		override public function update():void{
+			super.update();
 			
-			Path.drawDebug();
-			super.followPath(Path, Speed, Mode, AutoRotate);
-		}
-		
-		override public function stopFollowingPath(DestroyPath:Boolean=false):void{
-			if(animState != ANIM_IDLE){
-				animState = ANIM_IDLE;
-				this.play(ANIM_IDLE);
+			if(this.velocity.x > 0){
+				
+			}else if(this.velocity.x < 0){
+				
+			}else if(this.velocity.y > 0){
+				if(animState != ANIM_RUN_DOWN){
+					animState = ANIM_RUN_DOWN;
+					this.play(ANIM_RUN_DOWN);
+				}
+			}else if(this.velocity.y < 0){
+				
+			}else{
+				if(animState != ANIM_IDLE){
+					animState = ANIM_IDLE;
+					this.play(ANIM_IDLE);
+				}
 			}
-			
-			super.stopFollowingPath(DestroyPath);
 		}
-		*/
 		
 		//--------------------------------------
 		// PROTECTED & PRIVATE METHODS
