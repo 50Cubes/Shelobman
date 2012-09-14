@@ -84,9 +84,9 @@ package com.spiders.hero
 		}
 		public function heroDiesAnimation():void
 		{
-			this.scale.x *= 0.9;		
-			this.scale.y *= 0.9;		
-			this.angle += 15;
+			this.scale.x *= 0.90;		
+			this.scale.y *= 0.90;		
+			this.angle += 20;
 			this.alpha -= 0.01;
 		}
 		private function heroDies():void
@@ -95,7 +95,7 @@ package com.spiders.hero
 			isAlive = false;
 			// death xD
 			this.angle = 270;
-		//	SoundManager.playHeroDying();
+			SoundManager.playHeroDying();
 		}
 		//--------------------------------------
 		// PUBLIC METHODS

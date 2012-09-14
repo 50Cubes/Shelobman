@@ -52,8 +52,8 @@ package
 		//--------------------------------------
 		// PRIVATE VARIABLES
 		//--------------------------------------
-		//[Embed(source = 'assets/LOZ_Die.wav', mimeType="audio/wav")]
-		private var _linkDieClip:Class;
+		[Embed(source = 'assets/LOZ_Die.mp3')]
+		private static var _linkDieClip:Class;
 		
 		//--------------------------------------
 		// GETTER/SETTERS
@@ -63,13 +63,12 @@ package
 		//--------------------------------------
 		// PUBLIC METHODS
 		//--------------------------------------
-//		public static function playHeroDying():void
-//		{
-//			var sound:FlxSound = new FlxSound();
-//			sound.loadEmbedded(_linkDieClip, false, true);
-//			sound.play();
-//			sound.destroy();
-//		}
+		public static function playHeroDying():void
+		{
+			var sound:FlxSound = new FlxSound();
+			sound.loadEmbedded(_linkDieClip, false, true);
+			sound.play();
+		}
 		
 		//--------------------------------------
 		// EVENT HANDLERS
