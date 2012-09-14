@@ -3,6 +3,7 @@ package com.spiders.states
 {
 	import com.spiders.hero.HeroSprite;
 	import com.spiders.map.DungeonMap;
+	import com.spiders.monsters.SpiderSprite;
 	
 	import org.flixel.*;
 	
@@ -42,6 +43,7 @@ package com.spiders.states
 		private var _map:DungeonMap;
 		
 		private var _hero:HeroSprite;
+		private var _spiders:Vector.<SpiderSprite>;
 		
 		//--------------------------------------
 		// CONSTRUCTOR
@@ -67,6 +69,14 @@ package com.spiders.states
 			_hero = new HeroSprite(0, 0);
 			add(_hero);
 			
+			_spiders = new Vector.<SpiderSprite>();
+			var spider:SpiderSprite;
+			for(var i:int = 0; i < 20; i++)
+			{
+				spider = new SpiderSprite(Util.randInclusive(100,Util.STAGE_WIDTH-100), Util.randInclusive(100,Util.STAGE_HEIGHT-100));
+				_spiders.push(spider);
+				add(spider);
+			}
 			FlxG.camera.follow(_hero);
 		}
 		
@@ -81,6 +91,7 @@ package com.spiders.states
 			super.update();
 			
 			FlxG.collide(this._map, this._hero);
+			moveTowardsHero();
 			
 			var simplePath:FlxPath = new FlxPath();
 			simplePath.add(_hero.x + _hero.width/2, _hero.y + _hero.height/2);
@@ -110,17 +121,33 @@ package com.spiders.states
 			
 			/*
 			if(simplePath.nodes.length > 1){
-				//_hero.followPath(simplePath, 150);
-				_hero.acceleration.x = _hero.acceleration.y = 0;
-				_hero.velocity.
+			//_hero.followPath(simplePath, 150);
+			_hero.acceleration.x = _hero.acceleration.y = 0;
+			_hero.velocity.
 			}else{
-				//_hero.stopFollowingPath(true);
-				_hero.acceleration.x = _hero.acceleration.y = 0;
-				_hero.velocity.x = _hero.velocity.y = 0;
+			//_hero.stopFollowingPath(true);
+			_hero.acceleration.x = _hero.acceleration.y = 0;
+			_hero.velocity.x = _hero.velocity.y = 0;
 			}
 			*/
 		}
-		
+		private function moveTowardsHero():void
+		{
+			var target:FlxSprite = _hero;
+			for each (var spider:SpiderSprite in _spiders)
+			{	
+				//Find path to goal
+				//if (spider.animState == SpiderSprite.ANIM_IDLE)
+				
+				var path:FlxPath = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
+				
+				//Tell unit to follow path
+				if(path)
+					spider.followPath(path);
+				//spider.animState = SpiderSprite.ANIM_RUN_DOWN;
+				
+			}
+		}
 		//--------------------------------------
 		// PROTECTED & PRIVATE METHODS
 		//--------------------------------------							

@@ -1,6 +1,6 @@
 /**
  ##########################################################################################
- SpiderSprite
+ Util
  
  Copyright (c) 2012 Screamstream Interactive. All rights reserved.
  
@@ -17,13 +17,8 @@
  OTHER DEALINGS IN THE SOFTWARE.
  ##########################################################################################
  */
-package com.spiders.monsters
+package
 {
-	import flash.geom.Point;
-	
-	import org.flixel.FlxPoint;
-	import org.flixel.FlxSprite;
-	
 	
 	/**
 	 * [Description]
@@ -33,52 +28,24 @@ package com.spiders.monsters
 	 * @author 37@50cubes.com
 	 * @since Sep 13, 2012
 	 */
-	public class SpiderSprite extends FlxSprite
+	public class Util
 	{
 		
 		//--------------------------------------
 		// CLASS CONSTANTS
 		//--------------------------------------
-		public static const RUN_SPEED:Number = 150;
-		
-		public static const ANIM_RUN_DOWN:String = "run";
-		public static const RUN_DOWN_FRAMES:Array = [8,9,10,11,12,13,14,15];
-		
-		public static const ANIM_IDLE:String = "idle";
-		public static const IDLE_FRAMES:Array = [0,1,2,3,4,5,6,7];
 		
 		
 		//--------------------------------------
 		// PUBLIC VARIABLES
 		//--------------------------------------
-		[Embed(source = 'assets/spidersheet.png')]
-		private var _heroAsset:Class;
 		
-		public var animState:String = ANIM_IDLE;
-		private var _spawningPosition:Point;
 		
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------
-		public function SpiderSprite(X:Number=0, Y:Number=0, SimpleGraphic:Class=null)
+		public function Util()
 		{
-			super(X, Y);
-			_spawningPosition = new Point(X, Y);
-			
-			this.loadGraphic(_heroAsset, true);
-			
-			this.addAnimation(ANIM_RUN_DOWN, RUN_DOWN_FRAMES, 5, true);
-			this.addAnimation(ANIM_IDLE, IDLE_FRAMES, 5, true);
-			
-			this.offset.x = 32;
-			this.offset.y = 32;
-			this.width = 32;
-			this.height = 32;
-			this.centerOffsets();
-			
-			this.acceleration = new FlxPoint(0, 0);
-			
-			this.play(ANIM_IDLE);
 		}
 		
 		//--------------------------------------
@@ -89,12 +56,16 @@ package com.spiders.monsters
 		//--------------------------------------
 		// GETTER/SETTERS
 		//--------------------------------------
-		
+		public static var STAGE_WIDTH:Number = 800;
+		public static var STAGE_HEIGHT:Number = 600;
 		
 		//--------------------------------------
 		// PUBLIC METHODS
 		//--------------------------------------
-		
+		public static function randInclusive(min:Number, max:Number):Number
+		{
+			return min + (max - min + 1) * Math.random(); 
+		}
 		
 		//--------------------------------------
 		// EVENT HANDLERS
