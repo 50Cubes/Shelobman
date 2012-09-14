@@ -3,6 +3,8 @@ package
 {
 	import flash.display.Sprite;
 	
+	import org.flixel.FlxG;
+	
 	
 	/**
 	 * [Description]
@@ -29,7 +31,7 @@ package
 		//--------------------------------------
 		public function Shelobman()
 		{
-			
+			FlxG.switchState(new PlayState());
 		}
 		
 		//--------------------------------------

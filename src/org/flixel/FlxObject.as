@@ -4,7 +4,6 @@ package org.flixel
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	
-	import org.flixel.FlxBasic;
 	
 	/**
 	 * This is the base class for most of the display objects (<code>FlxSprite</code>, <code>FlxText</code>, etc).
