@@ -175,7 +175,7 @@ package com.spiders.states
 		
 		override public function update():void{
 			super.update();
-			
+			trace("hero position -- " + _hero.x + " " + _hero.y);
 			FlxG.collide(this._map, this._hero);
 			
 			FlxG.overlap(_spiders, _fires, onSpidersInFire);
