@@ -40,7 +40,7 @@ package com.spiders.states
 		/*
 		* Embed tile image
 		*/
-		[Embed(source = 'assets/3testBlocks.png')]
+		[Embed(source = 'assets/GameTiles.png')]
 		private var _imgTiles:Class;
 		/*
 		* Embed map data
@@ -176,22 +176,24 @@ package com.spiders.states
 		override public function update():void{
 			super.update();
 			
-			FlxG.collide(this._map, this._hero);
-			
 			FlxG.overlap(_spiders, _fires, onSpidersInFire);
-			FlxG.overlap(_hero, _fires, onHeroInFire);
 			
-			FlxG.overlap(_hero, _items, onItemPickup);
-			FlxG.overlap(_hero, _fires, onHeroInFire);
-			
-			_upateCounter++;
-			if(_upateCounter % _updateFrequency == 0)
-				moveTowardsHero();
+			if(_hero.isAlive && !_hero.isJumping){
+				FlxG.collide(_map, _hero, onMapCollision);
+				FlxG.overlap(_hero, _fires, onHeroInFire);
+			}
 			
 			_statusBar.updateHealth(_hero.HP);
 			
-			if(_hero.isAlive)
+			_upateCounter++;
+			if(_hero.isAlive){
+				FlxG.overlap(_hero, _items, onItemPickup);
+				
+				if(_upateCounter % _updateFrequency == 0)
+					moveTowardsHero();
+			
 				handleKeyboardInput();
+			}
 			else
 			{
 				_hero.velocity = new FlxPoint(0, 0);
@@ -216,7 +218,7 @@ package com.spiders.states
 					//var fireWorldPoint:FlxPoint = getWorldCoordInFrontOfHero();
 					var fireWorldPoint:FlxPoint = getWorldCoordTilesInFrontOfHero(1);
 					
-					var newFire:Fire = new Fire(fireWorldPoint.x, fireWorldPoint.y, null, onFireSnuff);
+					var newFire:Fire = new Fire(fireWorldPoint.x, fireWorldPoint.y - 40, onFireSnuff);
 					this._fires.add(newFire);
 					add(newFire);
 				}
@@ -224,8 +226,6 @@ package com.spiders.states
 			
 			if(FlxG.keys.justPressed("R")){
 				if(_hero.canJump && !_hero.isJumping){
-				//if(!_hero.isJumping){
-					//JUMP!
 					var jumpPoint:FlxPoint = getWorldCoordTilesInFrontOfHero(2);
 					
 					_hero.jumpTo(jumpPoint);
@@ -256,7 +256,7 @@ package com.spiders.states
 				_hero.drag.x = _hero.drag.y = 0;
 			}
 		}
-		private function doDamageToHero($spider:SpiderSprite, $hero:HeroSprite):void
+		private function spiderBiteHero($spider:SpiderSprite, $hero:HeroSprite):void
 		{
 			if($hero.isAlive){
 				$hero.gotHit(1);
@@ -270,7 +270,7 @@ package com.spiders.states
 				//Find path to goal
 				//if (spider.animState == SpiderSprite.ANIM_IDLE)
 				FlxG.collide(spider, _spiders);
-				FlxG.overlap(spider, _hero, doDamageToHero);
+				FlxG.overlap(spider, _hero, spiderBiteHero);
 				var path:FlxPath;
 				
 				var a:Number = spider.spawningPosition.x - _hero.x;
@@ -408,6 +408,19 @@ package com.spiders.states
 		private function onFireSnuff(fire:Fire):void{
 			fire.kill();
 			_fires.remove(fire, true);
+		}
+		
+		private function onMapCollision($map:DungeonMap, $hero:HeroSprite):void{
+			//Fuck it, just look at the tile i think they're going to
+			var destinyTile:FlxPoint = this.getTileCoordInFrontOfHero();
+			var destinyType:uint = _map.getTile(destinyTile.x, destinyTile.y);
+			if(destinyType == DungeonMap.PIT){
+				//YOU LOSE! GOOD DAY, SIR!
+				//FALL INTO THE PIT YOU BASTARD!
+				_hero.x = destinyTile.x * TILE_WIDTH + (TILE_WIDTH - _hero.width)/2;
+				_hero.y = destinyTile.y * TILE_HEIGHT + (TILE_HEIGHT + _hero.height)/2;
+				_hero.isAlive = false;
+			}
 		}
 		
 		private function onSpidersInFire($spider:FlxSprite, $fire:FlxSprite):void{
