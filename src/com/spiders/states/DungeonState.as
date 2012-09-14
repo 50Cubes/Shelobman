@@ -250,7 +250,9 @@ package com.spiders.states
 		}
 		private function doDamageToHero($spider:SpiderSprite, $hero:HeroSprite):void
 		{
-			$hero.gotHit(1);
+			if($hero.isAlive){
+				$hero.gotHit(1);
+			}
 		}
 		private function moveTowardsHero():void
 		{
@@ -387,12 +389,15 @@ package com.spiders.states
 			_fires.remove(fire, true);
 		}
 		
-		private function onHeroInFire($Hero:FlxSprite, $fire:FlxSprite):void{
-			_hero.gotHit(1);
-		}
 		private function onSpidersInFire($spider:FlxSprite, $fire:FlxSprite):void{
 			$spider.kill();
 			_spiders.remove($spider, true);
+		}
+		
+		private function onHeroInFire($hero:FlxSprite, $fire:FlxSprite):void{
+			if(_hero.isAlive){
+				_hero.gotHit(1);
+			}
 		}
 		
 		private function onItemPickup($hero:FlxSprite, $item:FlxSprite):void{
