@@ -379,10 +379,6 @@ package com.spiders.states
 			_spiders.remove($spider, true);
 		}
 		
-		private function onHeroInFire($hero:FlxSprite, $fire:FlxSprite):void{
-			_hero.gotHit(1);
-		}
-		
 		private function onItemPickup($hero:FlxSprite, $item:FlxSprite):void{
 			$item.kill();
 			if($item is HeartItemSprite)
