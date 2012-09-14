@@ -93,7 +93,7 @@ package com.spiders.states
 			super.create();
 			
 			_map = new DungeonMap();
-			_map.loadMap(new _dataMap, _imgTiles, TILE_WIDTH, TILE_HEIGHT, 0, 1);
+			_map.loadMap(new _dataMap, _imgTiles, TILE_WIDTH, TILE_HEIGHT, FlxTilemap.OFF, 0, 0, 1);
 			add(_map);
 			
 			_hero = new HeroSprite(HERO_START_POINT.x, HERO_START_POINT.y);
@@ -106,7 +106,7 @@ package com.spiders.states
 
 			for(var i:int = 0; i < 20; i++)
 			{
-				var openTiles:Array = _map.getTileCoords(0);
+				var openTiles:Array = _map.getTileCoords(1);
 				var tileIndex:int = Util.randInclusive(0, openTiles.length-1);
 				var point:FlxPoint = openTiles[tileIndex] as FlxPoint;
 				
@@ -129,11 +129,11 @@ package com.spiders.states
 		{
 			_items = new FlxGroup();
 
-			var floatingItem:ShoeItemSprite = new ShoeItemSprite(0,90,_bootItem);
+			var floatingItem:ShoeItemSprite = new ShoeItemSprite(64,150,_bootItem);
 			add(floatingItem);
 			_items.add(floatingItem);
 			
-			var candleItem:CandleItemSprite = new CandleItemSprite(0,30,_candleItem);
+			var candleItem:CandleItemSprite = new CandleItemSprite(64,200,_candleItem);
 			add(candleItem);
 			_items.add(candleItem);
 			
@@ -275,27 +275,32 @@ package com.spiders.states
 				var isOutOfRange:Boolean = spiderPythagorean > pythagorean;
 				// aggro
 				
-				if(isWithinHero == true && _hero.isAlive)
-				{
-					path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
-					
-					//Tell unit to follow path
-					if(path)
+				try{
+					if(isWithinHero == true && _hero.isAlive)
 					{
-						spider.followPath(path);
-					}
-				}
-				else
-				{
-					spider.velocity = new FlxPoint(0, 0);
-					path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(spider.spawningPosition.x, spider.spawningPosition.y));
-					
-					//Tell unit to follow path
-					if(path)
-					{
-						spider.followPath(path);
+						path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
 						
+						//Tell unit to follow path
+						if(path)
+						{
+							spider.followPath(path);
+						}
 					}
+					else
+					{
+						spider.velocity = new FlxPoint(0, 0);
+					
+						path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(spider.spawningPosition.x, spider.spawningPosition.y));
+						
+						//Tell unit to follow path
+						if(path)
+						{
+							spider.followPath(path);
+							
+						}
+					}
+				}catch(error:Error){
+					//Couldn't move spider :(
 				}
 			}
 		}
