@@ -114,12 +114,25 @@ package com.spiders.states
 		private function handleKeyboardInput():void{
 			if(FlxG.keys.F){
 				if(_hero.canFire && _fires.length < MAX_FIRES){
+					//Kill them with fire
 					var fireTilePoint:FlxPoint = getTileCoordInFrontOfHero();
 					var fireWorldPoint:FlxPoint = tileToWorldCoord(fireTilePoint);
 					
 					var newFire:Fire = new Fire(fireWorldPoint.x, fireWorldPoint.y, null, onFireSnuff);
 					this._fires.add(newFire);
 					add(newFire);
+				}
+			}
+			
+			if(FlxG.keys.R){
+				//if(_hero.canJump && !_hero.isJumping){
+				if(!_hero.isJumping){
+					//JUMP!
+					var jumpPoint:FlxPoint = getWorldCoordTilesInFrontOfHero(2);
+					
+					_hero.jumpTo(jumpPoint);
+					
+					return;
 				}
 			}
 			
@@ -203,6 +216,31 @@ package com.spiders.states
 				case WalkingDirectionalCharacter.ANIM_IDLE_RIGHT:
 				case WalkingDirectionalCharacter.ANIM_RUN_RIGHT:
 					returnPoint.x += 1;
+					break;
+			}
+			
+			return returnPoint;
+		}
+		
+		private function getWorldCoordTilesInFrontOfHero(numInFront:int = 2):FlxPoint{
+			var returnPoint:FlxPoint = new FlxPoint(_hero.x, _hero.y);
+			
+			switch(_hero.animState){
+				case WalkingDirectionalCharacter.ANIM_IDLE_DOWN:
+				case WalkingDirectionalCharacter.ANIM_RUN_DOWN:
+					returnPoint.y += numInFront * TILE_HEIGHT;
+					break;
+				case WalkingDirectionalCharacter.ANIM_IDLE_UP:
+				case WalkingDirectionalCharacter.ANIM_RUN_UP:
+					returnPoint.y -= numInFront * TILE_HEIGHT;
+					break;
+				case WalkingDirectionalCharacter.ANIM_IDLE_LEFT:
+				case WalkingDirectionalCharacter.ANIM_RUN_LEFT:
+					returnPoint.x -= numInFront * TILE_WIDTH;
+					break;
+				case WalkingDirectionalCharacter.ANIM_IDLE_RIGHT:
+				case WalkingDirectionalCharacter.ANIM_RUN_RIGHT:
+					returnPoint.x += numInFront * TILE_WIDTH;
 					break;
 			}
 			
