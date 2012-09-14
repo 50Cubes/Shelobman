@@ -69,7 +69,6 @@ package com.spiders.monsters
 		public function SpiderSprite(X:Number=0, Y:Number=0, SimpleGraphic:Class=null)
 		{
 			super(X, Y);
-			spawningPosition = new Point(X, Y);
 			
 			this.loadGraphic(_heroAsset, true);
 			
@@ -80,6 +79,7 @@ package com.spiders.monsters
 			this.centerOffsets();
 			
 			this.acceleration = new FlxPoint(0, 0);
+			spawningPosition = new Point(x, y);
 		}
 		public function doneDelay():Boolean
 		{

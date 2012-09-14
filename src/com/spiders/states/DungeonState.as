@@ -178,7 +178,7 @@ package com.spiders.states
 				var isOutOfRange:Boolean = spiderPythagorean > pythagorean;
 				// aggro
 				
-				if(isWithinHero == true && spider.isAggro == false)
+				if(isWithinHero == true)
 				{
 					path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
 					
@@ -186,37 +186,20 @@ package com.spiders.states
 					if(path)
 					{
 						spider.followPath(path);
-						spider.isAggro = true;
 					}
-					//spider.animState = SpiderSprite.ANIM_RUN_DOWN;
 				}
-					// no aggro, go back to spawning point
-				else if(isWithinHero == false && spider.isAggro == true || isOutOfRange)
+				else
 				{
+					spider.velocity = new FlxPoint(0, 0);
+					path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(spider.spawningPosition.x, spider.spawningPosition.y));
 					
-					var spiderSpawnA:Number = spider.x - spider.spawningPosition.x;
-					var spiderSpawnB:Number = spider.y - spider.spawningPosition.y;
-					var spiderSpawnPythagorean:Number = Math.sqrt(spiderSpawnA*spiderSpawnA + spiderSpawnB*spiderSpawnB);
-					
-					if(spiderSpawnPythagorean < TILE_WIDTH)
+					//Tell unit to follow path
+					if(path)
 					{
-						spider.isAggro = false;
-					}
-					else
-					{
-						path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(spider.spawningPosition.x + spider.width / 2, spider.spawningPosition.y + spider.height / 2));
+						spider.followPath(path);
 						
-						//Tell unit to follow path
-						if(path)
-						{
-							spider.followPath(path);
-							
-						}
 					}
 				}
-				
-				
-				
 			}
 		}
 		
