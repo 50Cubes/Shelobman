@@ -24,6 +24,9 @@ package com.spiders.misc
 		//--------------------------------------
 		// VARIABLES
 		//--------------------------------------
+		[Embed(source = 'assets/Spell_fire_flamebolt.png')]
+		private var _fireAsset:Class;
+		
 		private var createTime:Number;
 		private var _extinguishFunction:Function;
 		
@@ -32,7 +35,9 @@ package com.spiders.misc
 		//--------------------------------------
 		public function Fire(X:Number=0, Y:Number=0, SimpleGraphic:Class=null, extinguishFunction:Function = null)
 		{
-			super(X, Y, SimpleGraphic);
+			super(X, Y);
+			
+			this.loadGraphic(_fireAsset);
 			
 			createTime = new Date().time;
 			_extinguishFunction = extinguishFunction;

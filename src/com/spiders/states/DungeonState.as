@@ -4,7 +4,6 @@ package com.spiders.states
 	import com.spiders.characters.WalkingDirectionalCharacter;
 	import com.spiders.hero.HeroSprite;
 	import com.spiders.map.DungeonMap;
-
 	import com.spiders.misc.Fire;
 	import com.spiders.monsters.SpiderSprite;
 	import com.spiders.powerups.FirePowerup;
@@ -28,6 +27,7 @@ package com.spiders.states
 		public static const TILE_WIDTH:Number = 64;
 		public static const TILE_HEIGHT:Number = 64;
 		public static const AGGRO_DISTANCE:Number = 512;
+		public static const MAX_FIRES:int = 3;
 		
 		//--------------------------------------
 		// VARIABLES
@@ -113,7 +113,7 @@ package com.spiders.states
 		//--------------------------------------							
 		private function handleKeyboardInput():void{
 			if(FlxG.keys.F){
-				if(_hero.canFire){
+				if(_hero.canFire && _fires.length < MAX_FIRES){
 					var fireTilePoint:FlxPoint = getTileCoordInFrontOfHero();
 					var fireWorldPoint:FlxPoint = tileToWorldCoord(fireTilePoint);
 					
@@ -212,7 +212,7 @@ package com.spiders.states
 		private function tileToWorldCoord($tilePoint:FlxPoint):FlxPoint{
 			var retPnt:FlxPoint = new FlxPoint($tilePoint.x, $tilePoint.y);
 			retPnt.x *= TILE_WIDTH;
-			retPnt.y *- TILE_HEIGHT;
+			retPnt.y *= TILE_HEIGHT;
 			return retPnt;
 		}
 		
@@ -225,12 +225,13 @@ package com.spiders.states
 		}
 		
 		private function onFireSnuff(fire:Fire):void{
-			_fires.remove(fire, true);
 			fire.kill();
+			_fires.remove(fire, true);
 		}
 		
 		private function onSpidersInFire($spider:FlxSprite, $fire:FlxSprite):void{
-			this._spiders
+			$spider.kill();
+			_spiders.remove($spider, true);
 		}
 	}
 }
