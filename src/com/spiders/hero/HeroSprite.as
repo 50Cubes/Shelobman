@@ -46,8 +46,8 @@ package com.spiders.hero
 		private var _jumpDestWorldPoint:FlxPoint;
 		private var _jumpDiffPoint:FlxPoint;
 		
-		public var HP:int = 5;
-		public var HP_MAX:int = 5;
+		public var HP:int = 1;
+		public var HP_MAX:int = 1;
 		public var HP_REGEN:Number = 500;
 		public var isInvulerableState:Boolean = false;
 		private var _invulnerableTimer:FlxTimer  = new FlxTimer();

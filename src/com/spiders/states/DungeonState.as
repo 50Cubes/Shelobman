@@ -46,6 +46,8 @@ package com.spiders.states
 		private var _dataMap:Class;
 		
 		private var _map:DungeonMap;
+		private var _cameraGroup:FlxGroup;
+		private var _statusBar:StatusBar;
 		
 		private var _hero:HeroSprite;
 		private var _spiders:FlxGroup;
@@ -91,6 +93,8 @@ package com.spiders.states
 			_map.loadMap(new _dataMap, _imgTiles, TILE_WIDTH, TILE_HEIGHT, 0, 1);
 			add(_map);
 			
+
+			
 			_hero = new HeroSprite(0, 0);
 			add(_hero);
 			
@@ -119,8 +123,9 @@ package com.spiders.states
 			
 			_fires = new FlxGroup();
 			
-			
-			
+			_statusBar = new StatusBar();
+			add(_statusBar);
+
 			FlxG.camera.follow(_hero);
 		}
 		private function initItems():void
@@ -162,13 +167,18 @@ package com.spiders.states
 		override public function update():void{
 			super.update();
 			
+			
+			
 			FlxG.collide(this._map, this._hero);
 			FlxG.overlap(_hero, _firePowerup, onFirePickup);
 			
 			FlxG.overlap(_spiders, _fires, onSpidersInFire);
 			FlxG.overlap(_hero, _items, onItemPickup);
 			
+			
 			moveTowardsHero();
+			
+			_statusBar.updateHealth(_hero.HP);
 			
 			if(_hero.isAlive)
 				handleKeyboardInput();
