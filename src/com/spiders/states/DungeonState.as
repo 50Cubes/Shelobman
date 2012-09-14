@@ -3,6 +3,7 @@ package com.spiders.states
 {
 	import com.spiders.hero.HeroSprite;
 	import com.spiders.map.DungeonMap;
+	import com.spiders.powerups.FirePowerup;
 	import com.spiders.monsters.SpiderSprite;
 	
 	import org.flixel.*;
@@ -43,6 +44,8 @@ package com.spiders.states
 		private var _hero:HeroSprite;
 		private var _spiders:Vector.<SpiderSprite>;
 		
+		private var _firePowerup:FirePowerup;
+		
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------
@@ -63,6 +66,9 @@ package com.spiders.states
 			
 			_hero = new HeroSprite(0, 0);
 			add(_hero);
+			
+			_firePowerup = new FirePowerup(2 * TILE_WIDTH, 0);
+			add(_firePowerup);
 			
 			_spiders = new Vector.<SpiderSprite>();
 			var spider:SpiderSprite;
@@ -86,6 +92,8 @@ package com.spiders.states
 			super.update();
 			
 			FlxG.collide(this._map, this._hero);
+			FlxG.overlap(_hero, _firePowerup, onFirePickup);
+			
 			moveTowardsHero();
 			
 			handleKeyboardInput();
@@ -135,6 +143,9 @@ package com.spiders.states
 		//--------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------
-		
+		private function onFirePickup($hero:FlxObject, $powerup:FlxObject):void{
+			_firePowerup.kill();
+			_hero.canFire = true;
+		}
 	}
 }

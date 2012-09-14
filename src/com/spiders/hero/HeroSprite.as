@@ -31,7 +31,7 @@ package com.spiders.hero
 		[Embed(source = 'assets/SpriteHero_WalkingAll.png')]
 		private var _heroAsset:Class;
 		
-		
+		public var canFire:Boolean = false;
 		
 		//--------------------------------------
 		// CONSTRUCTOR
@@ -43,7 +43,7 @@ package com.spiders.hero
 			this.loadGraphic(_heroAsset, true);
 			
 			this.offset.x = 16;
-			this.offset.y = 48;
+			this.offset.y = 42;
 			this.width = 32;
 			this.height = 16;
 			//this.centerOffsets();
