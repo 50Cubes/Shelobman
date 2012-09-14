@@ -97,12 +97,15 @@ package com.spiders.states
 				//simplePath.add(_hero.x + _hero.width/2, _hero.y + _hero.height/2 + TILE_HEIGHT);
 				_hero.velocity.y = HeroSprite.RUN_SPEED;
 				_hero.velocity.x = 0;
+				
+				_hero.play(HeroSprite.ANIM_RUN_DOWN);
 			}else if(FlxG.keys.D){
 				//simplePath.add(_hero.x + _hero.width/2 + TILE_WIDTH, _hero.y + _hero.height/2);
 				_hero.velocity.y = 0;
 				_hero.velocity.x = HeroSprite.RUN_SPEED;
 			}else{
 				_hero.velocity.x = _hero.velocity.y = 0;
+				_hero.play(HeroSprite.ANIM_IDLE);
 			}
 			
 			/*

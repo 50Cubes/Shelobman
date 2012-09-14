@@ -21,8 +21,8 @@ package com.spiders.hero
 		//--------------------------------------
 		public static const RUN_SPEED:Number = 150;
 		
-		public static const ANIM_RUN:String = "run";
-		public static const RUN_FRAMES:Array = [0,1,2];
+		public static const ANIM_RUN_DOWN:String = "run";
+		public static const RUN_DOWN_FRAMES:Array = [0,1,2,3];
 		
 		public static const ANIM_IDLE:String = "idle";
 		public static const IDLE_FRAMES:Array = [3];
@@ -45,8 +45,8 @@ package com.spiders.hero
 			
 			this.loadGraphic(_heroAsset, true);
 			
-			this.addAnimation(ANIM_RUN, RUN_FRAMES, 30, true);
-			this.addAnimation(ANIM_IDLE, IDLE_FRAMES, 30, true);
+			this.addAnimation(ANIM_RUN_DOWN, RUN_DOWN_FRAMES, 5, true);
+			this.addAnimation(ANIM_IDLE, IDLE_FRAMES, 5, true);
 			
 			this.offset.x = 32;
 			this.offset.y = 32;
@@ -63,6 +63,7 @@ package com.spiders.hero
 		// PUBLIC METHODS
 		//--------------------------------------
 		
+		/*
 		override public function followPath(Path:FlxPath, Speed:Number=100, Mode:uint=PATH_FORWARD, AutoRotate:Boolean=false):void{
 			if(animState != ANIM_RUN){
 				animState = ANIM_RUN;
@@ -81,6 +82,7 @@ package com.spiders.hero
 			
 			super.stopFollowingPath(DestroyPath);
 		}
+		*/
 		
 		//--------------------------------------
 		// PROTECTED & PRIVATE METHODS
