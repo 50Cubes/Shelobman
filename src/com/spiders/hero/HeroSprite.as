@@ -2,6 +2,7 @@
 package com.spiders.hero
 {
 	import org.flixel.FlxPath;
+	import org.flixel.FlxPoint;
 	import org.flixel.FlxSprite;
 	
 	
@@ -18,6 +19,8 @@ package com.spiders.hero
 		//--------------------------------------
 		// CONSTANTS
 		//--------------------------------------
+		public static const RUN_SPEED:Number = 150;
+		
 		public static const ANIM_RUN:String = "run";
 		public static const RUN_FRAMES:Array = [0,1,2];
 		
@@ -42,8 +45,16 @@ package com.spiders.hero
 			
 			this.loadGraphic(_heroAsset, true);
 			
-			this.addAnimation(ANIM_RUN, RUN_FRAMES, 0, true);
-			this.addAnimation(ANIM_IDLE, IDLE_FRAMES, 0, true);
+			this.addAnimation(ANIM_RUN, RUN_FRAMES, 30, true);
+			this.addAnimation(ANIM_IDLE, IDLE_FRAMES, 30, true);
+			
+			this.offset.x = 32;
+			this.offset.y = 32;
+			this.width = 32;
+			this.height = 32;
+			this.centerOffsets();
+			
+			this.acceleration = new FlxPoint(0, 0);
 			
 			this.play(ANIM_IDLE);
 		}

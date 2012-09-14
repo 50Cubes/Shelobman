@@ -80,25 +80,42 @@ package com.spiders.states
 		override public function update():void{
 			super.update();
 			
+			FlxG.collide(this._map, this._hero);
+			
 			var simplePath:FlxPath = new FlxPath();
 			simplePath.add(_hero.x + _hero.width/2, _hero.y + _hero.height/2);
 			
 			if(FlxG.keys.W){
-				simplePath.add(_hero.x + _hero.width/2, _hero.y + _hero.height/2 - TILE_HEIGHT);
+				//simplePath.add(_hero.x + _hero.width/2, _hero.y + _hero.height/2 - TILE_HEIGHT);
+				_hero.velocity.y = -HeroSprite.RUN_SPEED;
+				_hero.velocity.x = 0;
 			}else if(FlxG.keys.A){
-				simplePath.add(_hero.x + _hero.width/2 - TILE_WIDTH, _hero.y + _hero.height/2);
+				//simplePath.add(_hero.x + _hero.width/2 - TILE_WIDTH, _hero.y + _hero.height/2);
+				_hero.velocity.y = 0;
+				_hero.velocity.x = -HeroSprite.RUN_SPEED;
 			}else if(FlxG.keys.S){
-				simplePath.add(_hero.x + _hero.width/2, _hero.y + _hero.height/2 + TILE_HEIGHT);
+				//simplePath.add(_hero.x + _hero.width/2, _hero.y + _hero.height/2 + TILE_HEIGHT);
+				_hero.velocity.y = HeroSprite.RUN_SPEED;
+				_hero.velocity.x = 0;
 			}else if(FlxG.keys.D){
-				simplePath.add(_hero.x + _hero.width/2 + TILE_WIDTH, _hero.y + _hero.height/2);
-			}
-			
-			if(simplePath.nodes.length > 1){
-				_hero.followPath(simplePath);
+				//simplePath.add(_hero.x + _hero.width/2 + TILE_WIDTH, _hero.y + _hero.height/2);
+				_hero.velocity.y = 0;
+				_hero.velocity.x = HeroSprite.RUN_SPEED;
 			}else{
-				_hero.stopFollowingPath(true);
 				_hero.velocity.x = _hero.velocity.y = 0;
 			}
+			
+			/*
+			if(simplePath.nodes.length > 1){
+				//_hero.followPath(simplePath, 150);
+				_hero.acceleration.x = _hero.acceleration.y = 0;
+				_hero.velocity.
+			}else{
+				//_hero.stopFollowingPath(true);
+				_hero.acceleration.x = _hero.acceleration.y = 0;
+				_hero.velocity.x = _hero.velocity.y = 0;
+			}
+			*/
 		}
 		
 		//--------------------------------------
