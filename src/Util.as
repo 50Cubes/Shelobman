@@ -19,6 +19,9 @@
  */
 package
 {
+	import com.spiders.states.DungeonState;
+	
+	import org.flixel.FlxPoint;
 	
 	/**
 	 * [Description]
@@ -66,7 +69,18 @@ package
 		{
 			return min + (max - min + 1) * Math.random(); 
 		}
-		
+		public static function coordToTile(coord:FlxPoint):FlxPoint
+		{
+			var heroTileX:int = Math.floor(coord.x / DungeonState.TILE_WIDTH);
+			var heroTileY:int = Math.floor(coord.y / DungeonState.TILE_HEIGHT);		
+			return new FlxPoint(heroTileX, heroTileY);
+		}
+		public static function tileToCoord(tile:FlxPoint):FlxPoint
+		{
+			var heroTileX:Number = tile.x * DungeonState.TILE_WIDTH;
+			var heroTileY:Number = tile.y * DungeonState.TILE_HEIGHT;		
+			return new FlxPoint(heroTileX, heroTileY);
+		}
 		//--------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------

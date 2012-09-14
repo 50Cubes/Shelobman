@@ -59,8 +59,8 @@ package com.spiders.monsters
 		[Embed(source = 'assets/spidersheet.png')]
 		private var _heroAsset:Class;
 		
-		public var spawningPosition:Point;
-		public var aggroDistance:Number = 128;
+		public var spawningPosition:FlxPoint;
+		public var aggroDistance:Number = 512;
 		public var isAggro:Boolean = false;
 		private var _checkDelay:Number = SpiderSprite.CHECK_DELAY_MAX;
 		//--------------------------------------
@@ -73,13 +73,14 @@ package com.spiders.monsters
 			this.loadGraphic(_heroAsset, true);
 			
 			this.offset.x = 16;
-			this.offset.y = 48;
+			this.offset.y = 38;
 			this.width = 32;
 			this.height = 16;
-			this.centerOffsets();
 			
 			this.acceleration = new FlxPoint(0, 0);
-			spawningPosition = new Point(x, y);
+			spawningPosition = Util.tileToCoord(Util.coordToTile(new FlxPoint(x, y)));
+//			spawningPosition.x += width;
+//			spawningPosition.y += height;
 		}
 		public function doneDelay():Boolean
 		{

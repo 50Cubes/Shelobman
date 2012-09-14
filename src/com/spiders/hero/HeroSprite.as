@@ -3,9 +3,12 @@ package com.spiders.hero
 {
 	import com.spiders.characters.WalkingDirectionalCharacter;
 	
+	import flash.sampler.startSampling;
+	
 	import org.flixel.FlxPath;
 	import org.flixel.FlxPoint;
 	import org.flixel.FlxSprite;
+	import org.flixel.FlxTimer;
 	
 	
 	/**
@@ -41,6 +44,10 @@ package com.spiders.hero
 		private var _jumpDestWorldPoint:FlxPoint;
 		private var _jumpDiffPoint:FlxPoint;
 		
+		public var HP:int = 5;
+		public var isInvulerableState:Boolean = false;
+		private var _invulnerableTimer:FlxTimer  = new FlxTimer();
+	
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------
@@ -57,7 +64,20 @@ package com.spiders.hero
 			
 			this.acceleration = new FlxPoint(0, 0);
 		}
-		
+		public function gotHit(dmg:int = 1):void
+		{
+			if(flickering == false)
+			{
+				
+				isInvulerableState = true;
+				HP -= dmg;
+				trace(HP);
+				this.flicker(1);
+			}
+			
+	
+		}
+
 		//--------------------------------------
 		// PUBLIC METHODS
 		//--------------------------------------

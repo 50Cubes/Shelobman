@@ -79,7 +79,9 @@ package com.spiders.states
 			var spider:SpiderSprite;
 			for(var i:int = 0; i < 20; i++)
 			{
-				spider = new SpiderSprite(Util.randInclusive(100,Util.STAGE_WIDTH-100), Util.randInclusive(100,Util.STAGE_HEIGHT-100));
+				spider = new SpiderSprite(i*TILE_WIDTH, 0);
+				
+				//spider = new SpiderSprite(Util.randInclusive(100,Util.STAGE_WIDTH-100), Util.randInclusive(100,Util.STAGE_HEIGHT-100));
 				_spiders.add(spider);
 				add(spider);
 			}
@@ -155,6 +157,13 @@ package com.spiders.states
 			_hero.acceleration.x = _hero.acceleration.y = 0;
 			_hero.drag.x = _hero.drag.y = 0;
 		}
+		private function doDamageToHero($spider:SpiderSprite, $hero:HeroSprite):void
+		{
+
+	
+				$hero.gotHit(1);
+			
+		}
 		private function moveTowardsHero():void
 		{
 			var target:FlxSprite = _hero;
@@ -163,6 +172,7 @@ package com.spiders.states
 				//Find path to goal
 				//if (spider.animState == SpiderSprite.ANIM_IDLE)
 				FlxG.collide(spider, _spiders);
+				FlxG.collide(spider, _hero, doDamageToHero);
 				var path:FlxPath;
 				
 				var a:Number = spider.spawningPosition.x - _hero.x;
