@@ -11,8 +11,7 @@ package
 	{
 		public function Shelobman()
 		{
-			//super(400, 300, MenuState, 1, 20, 20);
-			super(Util.STAGE_WIDTH, Util.STAGE_HEIGHT, DungeonState);
+			super(Util.STAGE_WIDTH, Util.STAGE_HEIGHT, DungeonState,1, 30, 30);
 		}
 	}
 }

@@ -21,8 +21,6 @@ package com.spiders.states
 		//--------------------------------------
 		// CONSTANTS
 		//--------------------------------------
-		public static const FRAMERATE:Number = 60;
-		
 		public static const TILE_WIDTH:Number = 64;
 		public static const TILE_HEIGHT:Number = 64;
 		
@@ -59,9 +57,6 @@ package com.spiders.states
 		override public function create():void{
 			super.create();
 			
-			FlxG.framerate = FRAMERATE;
-			FlxG.flashFramerate = FRAMERATE;
-			
 			_map = new DungeonMap();
 			_map.loadMap(new _dataMap, _imgTiles, TILE_WIDTH, TILE_HEIGHT, 0, 1);
 			add(_map);
@@ -93,43 +88,32 @@ package com.spiders.states
 			FlxG.collide(this._map, this._hero);
 			moveTowardsHero();
 			
-			var simplePath:FlxPath = new FlxPath();
-			simplePath.add(_hero.x + _hero.width/2, _hero.y + _hero.height/2);
-			
+			handleKeyboardInput();
+		}
+		
+		//--------------------------------------
+		// PROTECTED & PRIVATE METHODS
+		//--------------------------------------							
+		private function handleKeyboardInput():void{
+			//Don't worry about updating the hero's animations, he will update himself from his velocity.
 			if(FlxG.keys.W){
-				//simplePath.add(_hero.x + _hero.width/2, _hero.y + _hero.height/2 - TILE_HEIGHT);
 				_hero.velocity.y = -HeroSprite.RUN_SPEED;
 				_hero.velocity.x = 0;
 			}else if(FlxG.keys.A){
-				//simplePath.add(_hero.x + _hero.width/2 - TILE_WIDTH, _hero.y + _hero.height/2);
 				_hero.velocity.y = 0;
 				_hero.velocity.x = -HeroSprite.RUN_SPEED;
 			}else if(FlxG.keys.S){
-				//simplePath.add(_hero.x + _hero.width/2, _hero.y + _hero.height/2 + TILE_HEIGHT);
 				_hero.velocity.y = HeroSprite.RUN_SPEED;
 				_hero.velocity.x = 0;
-				
-				_hero.play(HeroSprite.ANIM_RUN_DOWN);
 			}else if(FlxG.keys.D){
-				//simplePath.add(_hero.x + _hero.width/2 + TILE_WIDTH, _hero.y + _hero.height/2);
 				_hero.velocity.y = 0;
 				_hero.velocity.x = HeroSprite.RUN_SPEED;
 			}else{
 				_hero.velocity.x = _hero.velocity.y = 0;
-				_hero.play(HeroSprite.ANIM_IDLE);
 			}
-			
-			/*
-			if(simplePath.nodes.length > 1){
-			//_hero.followPath(simplePath, 150);
+
 			_hero.acceleration.x = _hero.acceleration.y = 0;
-			_hero.velocity.
-			}else{
-			//_hero.stopFollowingPath(true);
-			_hero.acceleration.x = _hero.acceleration.y = 0;
-			_hero.velocity.x = _hero.velocity.y = 0;
-			}
-			*/
+			_hero.drag.x = _hero.drag.y = 0;
 		}
 		private function moveTowardsHero():void
 		{
@@ -148,11 +132,6 @@ package com.spiders.states
 				
 			}
 		}
-		//--------------------------------------
-		// PROTECTED & PRIVATE METHODS
-		//--------------------------------------							
-		
-		
 		//--------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------
