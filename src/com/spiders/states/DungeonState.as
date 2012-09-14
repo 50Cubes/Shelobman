@@ -55,6 +55,8 @@ package com.spiders.states
 		private var _hero:HeroSprite;
 		private var _spiders:FlxGroup;
 		private var _items:FlxGroup;
+		private var _upateCounter:int = 0;
+		private var _updateFrequency:int = FlxG.framerate;
 		
 		//private var _firePowerup:FirePowerup;
 		private var _fires:FlxGroup;
@@ -177,8 +179,9 @@ package com.spiders.states
 			FlxG.overlap(_hero, _items, onItemPickup);
 			FlxG.overlap(_hero, _fires, onHeroInFire);
 			
-			
-			moveTowardsHero();
+			_upateCounter++;
+			if(_upateCounter % _updateFrequency == 0)
+				moveTowardsHero();
 			
 			_statusBar.updateHealth(_hero.HP);
 			
@@ -269,11 +272,12 @@ package com.spiders.states
 				var spiderB:Number = spider.y - _hero.y;
 				var spiderPythagorean:Number = Math.sqrt(spiderA*spiderA + spiderB*spiderB) ;
 				
-				var isWithinHero:Boolean = pythagorean < spider.aggroDistance ? true : false;
+				var isWithinAggroHero:Boolean = pythagorean < spider.aggroDistance ? true : false;
 				var isOutOfRange:Boolean = spiderPythagorean > pythagorean;
 				// aggro
+				var isWithinGiveupHero:Boolean = pythagorean < spider.giveupDistance ? true : false;
 				
-				if(isWithinHero == true && _hero.isAlive)
+				if(isWithinAggroHero == true && _hero.isAlive)
 				{
 					path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
 					
@@ -281,6 +285,18 @@ package com.spiders.states
 					if(path)
 					{
 						spider.followPath(path);
+						spider.isAggro = true;
+					}
+				}
+				else if(isWithinGiveupHero == true && _hero.isAlive)
+				{
+					path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
+					
+					//Tell unit to follow path
+					if(path)
+					{
+						spider.followPath(path);
+						spider.isAggro = true;
 					}
 				}
 				else

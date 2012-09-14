@@ -60,7 +60,8 @@ package com.spiders.monsters
 		private var _heroAsset:Class;
 		
 		public var spawningPosition:FlxPoint;
-		public var aggroDistance:Number = 512;
+		public var aggroDistance:Number = 256;
+		public var giveupDistance:Number = 512;
 		public var isAggro:Boolean = false;
 		private var _checkDelay:Number = SpiderSprite.CHECK_DELAY_MAX;
 		//--------------------------------------
