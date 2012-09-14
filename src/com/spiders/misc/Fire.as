@@ -1,4 +1,5 @@
-package com.spiders.powerups
+
+package com.spiders.misc
 {
 	import org.flixel.FlxSprite;
 	
@@ -10,7 +11,7 @@ package com.spiders.powerups
 	 * @email 73@50cubes.com
 	 * @since Sep 13, 2012
 	 */
-	public class FirePowerup extends FlxSprite
+	public class Fire extends FlxSprite
 	{
 		
 		//--------------------------------------
@@ -26,16 +27,9 @@ package com.spiders.powerups
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------
-		public function FirePowerup(X:Number=0, Y:Number=0, SimpleGraphic:Class=null)
+		public function Fire(X:Number=0, Y:Number=0, SimpleGraphic:Class=null)
 		{
 			super(X, Y, SimpleGraphic);
-			
-			this.width = 32;
-			this.height = 32;
-			this.offset.x = 16;
-			this.offset.y = 16;
-			
-			this.color = 0xFF0000;
 		}
 		
 		//--------------------------------------

@@ -31,7 +31,7 @@ package com.spiders.hero
 		[Embed(source = 'assets/SpriteHero_WalkingAll.png')]
 		private var _heroAsset:Class;
 		
-		
+		public var canFire:Boolean = false;
 		
 		//--------------------------------------
 		// CONSTRUCTOR
