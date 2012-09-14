@@ -55,6 +55,8 @@ package com.spiders.states
 		private var _hero:HeroSprite;
 		private var _spiders:FlxGroup;
 		private var _items:FlxGroup;
+		private var _upateCounter:int = 0;
+		private var _updateFrequency:int = FlxG.framerate;
 		
 		//private var _firePowerup:FirePowerup;
 		private var _fires:FlxGroup;
@@ -100,15 +102,22 @@ package com.spiders.states
 			add(_hero);
 			
 			initItems();
+			var openTiles:Array = _map.getTileCoords(0);
 			
 			_spiders = new FlxGroup();
 			var spider:SpiderSprite;
+			var point:FlxPoint;
 
-			for(var i:int = 0; i < 20; i++)
+			
+			for(var i:int = 0; i < 2; i++)
 			{
-				var openTiles:Array = _map.getTileCoords(1);
+				//var openTiles:Array = _map.getTileCoords(1);
 				var tileIndex:int = Util.randInclusive(0, openTiles.length-1);
-				var point:FlxPoint = openTiles[tileIndex] as FlxPoint;
+			//	var tileIndex:int = Util.randInclusive(0, openTiles.length-1);
+			//	point = openTiles[tileIndex] as FlxPoint;
+				point = openTiles[3+i] as FlxPoint;
+				trace("point ");
+				trace(point.x + " " + point.y);
 				
 				spider = new SpiderSprite(point.x, point.y);
 				_spiders.add(spider);
@@ -167,8 +176,6 @@ package com.spiders.states
 		override public function update():void{
 			super.update();
 			
-			
-			
 			FlxG.collide(this._map, this._hero);
 			
 			FlxG.overlap(_spiders, _fires, onSpidersInFire);
@@ -177,8 +184,9 @@ package com.spiders.states
 			FlxG.overlap(_hero, _items, onItemPickup);
 			FlxG.overlap(_hero, _fires, onHeroInFire);
 			
-			
-			moveTowardsHero();
+			_upateCounter++;
+			if(_upateCounter % _updateFrequency == 0)
+				moveTowardsHero();
 			
 			_statusBar.updateHealth(_hero.HP);
 			
@@ -227,23 +235,26 @@ package com.spiders.states
 			}
 			
 			//Don't worry about updating the hero's animations, he will update himself from his velocity.
-			if(FlxG.keys.W){
-				_hero.velocity.y = -HeroSprite.RUN_SPEED;
-				_hero.velocity.x = 0;
-			}else if(FlxG.keys.A){
-				_hero.velocity.y = 0;
-				_hero.velocity.x = -HeroSprite.RUN_SPEED;
-			}else if(FlxG.keys.S){
-				_hero.velocity.y = HeroSprite.RUN_SPEED;
-				_hero.velocity.x = 0;
-			}else if(FlxG.keys.D){
-				_hero.velocity.y = 0;
-				_hero.velocity.x = HeroSprite.RUN_SPEED;
-			}else{
-				_hero.velocity.x = _hero.velocity.y = 0;
+			
+			if(!_hero.isJumping){
+				if(FlxG.keys.W){
+					_hero.velocity.y = -HeroSprite.RUN_SPEED;
+					_hero.velocity.x = 0;
+				}else if(FlxG.keys.A){
+					_hero.velocity.y = 0;
+					_hero.velocity.x = -HeroSprite.RUN_SPEED;
+				}else if(FlxG.keys.S){
+					_hero.velocity.y = HeroSprite.RUN_SPEED;
+					_hero.velocity.x = 0;
+				}else if(FlxG.keys.D){
+					_hero.velocity.y = 0;
+					_hero.velocity.x = HeroSprite.RUN_SPEED;
+				}else{
+					_hero.velocity.x = _hero.velocity.y = 0;
+				}
+				_hero.acceleration.x = _hero.acceleration.y = 0;
+				_hero.drag.x = _hero.drag.y = 0;
 			}
-			_hero.acceleration.x = _hero.acceleration.y = 0;
-			_hero.drag.x = _hero.drag.y = 0;
 		}
 		private function doDamageToHero($spider:SpiderSprite, $hero:HeroSprite):void
 		{
@@ -271,37 +282,62 @@ package com.spiders.states
 				var spiderB:Number = spider.y - _hero.y;
 				var spiderPythagorean:Number = Math.sqrt(spiderA*spiderA + spiderB*spiderB) ;
 				
-				var isWithinHero:Boolean = pythagorean < spider.aggroDistance ? true : false;
+				var isWithinAggroHero:Boolean = pythagorean < spider.aggroDistance ? true : false;
 				var isOutOfRange:Boolean = spiderPythagorean > pythagorean;
 				// aggro
+				var isWithinGiveupHero:Boolean = pythagorean < spider.giveupDistance ? true : false;
 				
+
 				try{
-					if(isWithinHero == true && _hero.isAlive)
+					if(isWithinAggroHero == true && _hero.isAlive)
 					{
+						trace("if isWithinAggroHero");
 						path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
 						
 						//Tell unit to follow path
 						if(path)
 						{
 							spider.followPath(path);
+							spider.isAggro = true;
 						}
 					}
 					else
 					{
-						spider.velocity = new FlxPoint(0, 0);
-					
-						path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(spider.spawningPosition.x, spider.spawningPosition.y));
-						
-						//Tell unit to follow path
-						if(path)
+						trace("else ");
+						if(isWithinGiveupHero == true && _hero.isAlive && spider.isAggro == true)
 						{
-							spider.followPath(path);
+							trace("else if -- isWithinGiveupHero");
+							path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
 							
+							//Tell unit to follow path
+							if(path)
+							{
+								spider.followPath(path);
+							}
+						}
+						else
+						{
+							
+							path = _map.findPath(new FlxPoint(spider.x, spider.y), spider.spawningPosition);
+							spider.isAggro = false;
+							//Tell unit to follow path
+							
+							if(path)
+							{
+								spider.followPath(path);
+								
+							}
+							if(spider.pathSpeed == 0)
+							{
+								trace("else else");
+								spider.velocity = new FlxPoint(0, 0);
+							}
 						}
 					}
 				}catch(error:Error){
 					//Couldn't move spider :(
 				}
+				
 			}
 		}
 		
@@ -368,10 +404,6 @@ package com.spiders.states
 		//--------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------
-//		private function onFirePickup($hero:FlxObject, $powerup:FlxObject):void{
-//			firebombItem.kill();
-//			_hero.canFire = true;
-//		}
 		
 		private function onFireSnuff(fire:Fire):void{
 			fire.kill();
@@ -399,6 +431,7 @@ package com.spiders.states
 			else if ($item is ShoeItemSprite)
 			{
 				_statusBar.showShoe(true);
+				_hero.canJump = true;
 			}
 			else if ($item is CandleItemSprite)
 			{

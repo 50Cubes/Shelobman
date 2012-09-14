@@ -60,7 +60,8 @@ package com.spiders.monsters
 		private var _heroAsset:Class;
 		
 		public var spawningPosition:FlxPoint;
-		public var aggroDistance:Number = 512;
+		public var aggroDistance:Number = 100;
+		public var giveupDistance:Number = 300;
 		public var isAggro:Boolean = false;
 		private var _checkDelay:Number = SpiderSprite.CHECK_DELAY_MAX;
 		//--------------------------------------
@@ -69,16 +70,19 @@ package com.spiders.monsters
 		public function SpiderSprite(X:Number=0, Y:Number=0, SimpleGraphic:Class=null)
 		{
 			super(X, Y);
-			
+			//trace("spawningPosition before ");
+			//trace(spawningPosition.x + " " + spawningPosition.y);
+
 			this.loadGraphic(_heroAsset, true);
-			
-			this.offset.x = 16;
+			this.offset.x = 30;
 			this.offset.y = 38;
 			this.width = 32;
 			this.height = 16;
 			
-			this.acceleration = new FlxPoint(0, 0);
-			spawningPosition = Util.tileToCoord(Util.coordToTile(new FlxPoint(x, y)));
+			//this.acceleration = new FlxPoint(0, 0);
+			spawningPosition = new FlxPoint(X+width*0.5,Y+height*0.5);// Util.tileToCoord(Util.coordToTile(new FlxPoint(x, y)));
+			//trace("spawningPosition ");
+			//trace(spawningPosition.x + " " + spawningPosition.y);
 //			spawningPosition.x += width;
 //			spawningPosition.y += height;
 		}
