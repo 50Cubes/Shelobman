@@ -3,8 +3,10 @@ package com.spiders.hero
 {
 	import com.spiders.characters.WalkingDirectionalCharacter;
 	
+	import flash.display.Stage;
 	import flash.sampler.startSampling;
 	
+	import org.flixel.FlxG;
 	import org.flixel.FlxPath;
 	import org.flixel.FlxPoint;
 	import org.flixel.FlxSprite;
@@ -45,6 +47,8 @@ package com.spiders.hero
 		private var _jumpDiffPoint:FlxPoint;
 		
 		public var HP:int = 5;
+		public var MAX_HP:int = 5;
+		public var HP_REGEN:Number = 30;
 		public var isInvulerableState:Boolean = false;
 		private var _invulnerableTimer:FlxTimer  = new FlxTimer();
 		public var isAlive:Boolean = true;
@@ -82,6 +86,10 @@ package com.spiders.hero
 			
 	
 		}
+		public function raiseMaxHPBy(hp:int):void
+		{
+			MAX_HP += hp;
+		}
 		public function heroDiesAnimation():void
 		{
 			this.scale.x *= 0.90;		
@@ -111,7 +119,7 @@ package com.spiders.hero
 		
 		override public function update():void{
 			super.update();
-			
+
 			if(this.isJumping){
 				//Update the jumping pseudo-tween
 				var now:Number = new Date().time;

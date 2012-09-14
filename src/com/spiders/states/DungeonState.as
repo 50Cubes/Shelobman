@@ -49,6 +49,7 @@ package com.spiders.states
 		
 		private var _hero:HeroSprite;
 		private var _spiders:FlxGroup;
+		private var _items:FlxGroup;
 		
 		private var _firePowerup:FirePowerup;
 		private var _fires:FlxGroup;
@@ -111,27 +112,38 @@ package com.spiders.states
 			
 			_fires = new FlxGroup();
 			
+			
+			
 			FlxG.camera.follow(_hero);
 		}
 		private function initItems():void
 		{
+			_items = new FlxGroup();
+			
 			var floatingItem:FloatingItemSprite = new FloatingItemSprite(0,0,_bootItem);
 			add(floatingItem);
+			_items.add(floatingItem);
 			
 			var btorchItem:FloatingItemSprite = new FloatingItemSprite(0,30,_btorchItem);
 			add(btorchItem);
+			_items.add(btorchItem);
 			
-			var heartItem:FloatingItemSprite = new FloatingItemSprite(0,60,_heartItem);
+			var heartItem:HeartItemSprite = new HeartItemSprite(0,60,_heartItem);
 			add(heartItem);
+			_items.add(heartItem);
 			
 			var mbootItem:FloatingItemSprite = new FloatingItemSprite(0,90,_mbootItem);
 			add(mbootItem);
+			_items.add(mbootItem);
 			
 			var torchItem:FloatingItemSprite = new FloatingItemSprite(0,120,_torchItem);
 			add(torchItem);
+			_items.add(torchItem);
 			
 			var firebombItem:FloatingItemSprite = new FloatingItemSprite(0,150,_firebombItem);
 			add(firebombItem);
+			_items.add(firebombItem);
+			
 		}
 		override public function destroy():void{
 			super.destroy();
@@ -145,7 +157,9 @@ package com.spiders.states
 			
 			FlxG.collide(this._map, this._hero);
 			FlxG.overlap(_hero, _firePowerup, onFirePickup);
+			
 			FlxG.overlap(_spiders, _fires, onSpidersInFire);
+			FlxG.overlap(_hero, _items, onItemPickup);
 			
 			moveTowardsHero();
 			
@@ -338,6 +352,14 @@ package com.spiders.states
 		private function onSpidersInFire($spider:FlxSprite, $fire:FlxSprite):void{
 			$spider.kill();
 			_spiders.remove($spider, true);
+		}
+		private function onItemPickup($hero:FlxSprite, $item:FlxSprite):void{
+			$item.kill();
+			if($item is HeartItemSprite)
+			{
+				_hero.raiseMaxHPBy(($item as HeartItemSprite).health);
+			}
+			_items.remove($item, true);
 		}
 	}
 }
