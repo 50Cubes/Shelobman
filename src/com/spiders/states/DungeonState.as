@@ -27,6 +27,7 @@ package com.spiders.states
 		public static const TILE_WIDTH:Number = 64;
 		public static const TILE_HEIGHT:Number = 64;
 		public static const AGGRO_DISTANCE:Number = 512;
+		public static const MAX_FIRES:int = 3;
 		
 		//--------------------------------------
 		// VARIABLES
@@ -112,13 +113,26 @@ package com.spiders.states
 		//--------------------------------------							
 		private function handleKeyboardInput():void{
 			if(FlxG.keys.F){
-				if(_hero.canFire){
+				if(_hero.canFire && _fires.length < MAX_FIRES){
+					//Kill them with fire
 					var fireTilePoint:FlxPoint = getTileCoordInFrontOfHero();
 					var fireWorldPoint:FlxPoint = tileToWorldCoord(fireTilePoint);
 					
 					var newFire:Fire = new Fire(fireWorldPoint.x, fireWorldPoint.y, null, onFireSnuff);
 					this._fires.add(newFire);
 					add(newFire);
+				}
+			}
+			
+			if(FlxG.keys.R){
+				//if(_hero.canJump && !_hero.isJumping){
+				if(!_hero.isJumping){
+					//JUMP!
+					var jumpPoint:FlxPoint = getWorldCoordTilesInFrontOfHero(2);
+					
+					_hero.jumpTo(jumpPoint);
+					
+					return;
 				}
 			}
 			
@@ -234,10 +248,35 @@ package com.spiders.states
 			return returnPoint;
 		}
 		
+		private function getWorldCoordTilesInFrontOfHero(numInFront:int = 2):FlxPoint{
+			var returnPoint:FlxPoint = new FlxPoint(_hero.x, _hero.y);
+			
+			switch(_hero.animState){
+				case WalkingDirectionalCharacter.ANIM_IDLE_DOWN:
+				case WalkingDirectionalCharacter.ANIM_RUN_DOWN:
+					returnPoint.y += numInFront * TILE_HEIGHT;
+					break;
+				case WalkingDirectionalCharacter.ANIM_IDLE_UP:
+				case WalkingDirectionalCharacter.ANIM_RUN_UP:
+					returnPoint.y -= numInFront * TILE_HEIGHT;
+					break;
+				case WalkingDirectionalCharacter.ANIM_IDLE_LEFT:
+				case WalkingDirectionalCharacter.ANIM_RUN_LEFT:
+					returnPoint.x -= numInFront * TILE_WIDTH;
+					break;
+				case WalkingDirectionalCharacter.ANIM_IDLE_RIGHT:
+				case WalkingDirectionalCharacter.ANIM_RUN_RIGHT:
+					returnPoint.x += numInFront * TILE_WIDTH;
+					break;
+			}
+			
+			return returnPoint;
+		}
+		
 		private function tileToWorldCoord($tilePoint:FlxPoint):FlxPoint{
 			var retPnt:FlxPoint = new FlxPoint($tilePoint.x, $tilePoint.y);
 			retPnt.x *= TILE_WIDTH;
-			retPnt.y *- TILE_HEIGHT;
+			retPnt.y *= TILE_HEIGHT;
 			return retPnt;
 		}
 		
@@ -250,12 +289,13 @@ package com.spiders.states
 		}
 		
 		private function onFireSnuff(fire:Fire):void{
-			_fires.remove(fire, true);
 			fire.kill();
+			_fires.remove(fire, true);
 		}
 		
 		private function onSpidersInFire($spider:FlxSprite, $fire:FlxSprite):void{
-			this._spiders
+			$spider.kill();
+			_spiders.remove($spider, true);
 		}
 	}
 }

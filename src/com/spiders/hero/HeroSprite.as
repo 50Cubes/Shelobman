@@ -22,7 +22,8 @@ package com.spiders.hero
 		// CONSTANTS
 		//--------------------------------------
 		public static const RUN_SPEED:Number = 150;
-		
+		public static const JUMP_DURATION:Number = 500;
+		public static const JUMP_Y_PEAK:Number = 50;
 		
 		
 		//--------------------------------------
@@ -32,6 +33,13 @@ package com.spiders.hero
 		private var _heroAsset:Class;
 		
 		public var canFire:Boolean = false;
+		public var canJump:Boolean = false;
+		public var isJumping:Boolean = false;
+		
+		private var _jumpStartTime:Number;
+		private var _jumpStartWorldPoint:FlxPoint;
+		private var _jumpDestWorldPoint:FlxPoint;
+		private var _jumpDiffPoint:FlxPoint;
 		
 		//--------------------------------------
 		// CONSTRUCTOR
@@ -46,7 +54,6 @@ package com.spiders.hero
 			this.offset.y = 42;
 			this.width = 32;
 			this.height = 16;
-			//this.centerOffsets();
 			
 			this.acceleration = new FlxPoint(0, 0);
 		}
@@ -54,13 +61,48 @@ package com.spiders.hero
 		//--------------------------------------
 		// PUBLIC METHODS
 		//--------------------------------------
+		public function jumpTo($worldPoint:FlxPoint):void{
+			this.isJumping = true;
+			_jumpStartTime = new Date().time;
+			_jumpStartWorldPoint = new FlxPoint(this.x, this.y);
+			_jumpDestWorldPoint = $worldPoint;
+			
+			_jumpDiffPoint = new FlxPoint($worldPoint.x - this.x, $worldPoint.y - this.y);
+		}
 		
+		override public function update():void{
+			super.update();
+			
+			if(this.isJumping){
+				//Update the jumping pseudo-tween
+				var now:Number = new Date().time;
+				var timeOffset:Number = (now - _jumpStartTime) - JUMP_DURATION/2;
+				
+				if(now - _jumpStartTime >= JUMP_DURATION){
+					//stop jumping
+					this.isJumping = false;
+					
+					this.x = _jumpDestWorldPoint.x;
+					this.y = _jumpDestWorldPoint.y;
+				}else{
+					//Make a parabolic y offset for jumping
+					var yJumpOffset:Number;
+					if(now - _jumpStartTime < JUMP_DURATION/2){
+						yJumpOffset = -JUMP_Y_PEAK * (now - _jumpStartTime)/JUMP_DURATION;
+					}else{
+						yJumpOffset = -JUMP_Y_PEAK * ((_jumpStartTime + JUMP_DURATION) - now)/JUMP_DURATION;
+					}
+					 //PSEUDO_GRAV_CONST * (timeOffset * timeOffset) + JUMP_Y_PEAK;
+					this.y = _jumpStartWorldPoint.y + (now - _jumpStartTime)/JUMP_DURATION * _jumpDiffPoint.y + yJumpOffset;
+					this.x = _jumpStartWorldPoint.x + (now - _jumpStartTime)/JUMP_DURATION * _jumpDiffPoint.x;
+				}
+			}
+		}
 		
 		
 		//--------------------------------------
 		// PROTECTED & PRIVATE METHODS
 		//--------------------------------------							
-		
 		
 		//--------------------------------------
 		// EVENT HANDLERS
