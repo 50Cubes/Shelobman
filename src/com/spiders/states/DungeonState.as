@@ -174,6 +174,8 @@ package com.spiders.states
 			//FlxG.overlap(_hero, firebombItem, onFirePickup);
 			
 			FlxG.overlap(_spiders, _fires, onSpidersInFire);
+			FlxG.overlap(_hero, _fires, onHeroInFire);
+			
 			FlxG.overlap(_hero, _items, onItemPickup);
 			
 			
@@ -367,6 +369,9 @@ package com.spiders.states
 			_fires.remove(fire, true);
 		}
 		
+		private function onHeroInFire($Hero:FlxSprite, $fire:FlxSprite):void{
+			_hero.gotHit(1);
+		}
 		private function onSpidersInFire($spider:FlxSprite, $fire:FlxSprite):void{
 			$spider.kill();
 			_spiders.remove($spider, true);
