@@ -12,7 +12,7 @@ package
 		public function Shelobman()
 		{
 			//super(400, 300, MenuState, 1, 20, 20);
-			super(800, 600, DungeonState);
+			super(800, 600, DungeonState, 1, 30, 30);
 		}
 	}
 }
