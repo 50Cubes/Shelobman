@@ -164,6 +164,7 @@ package com.spiders.states
 			
 			FlxG.overlap(_spiders, _fires, onSpidersInFire);
 			FlxG.overlap(_hero, _items, onItemPickup);
+			FlxG.overlap(_hero, _fires, onHeroInFire);
 			
 			moveTowardsHero();
 			
@@ -360,6 +361,11 @@ package com.spiders.states
 			$spider.kill();
 			_spiders.remove($spider, true);
 		}
+		
+		private function onHeroInFire($hero:FlxSprite, $fire:FlxSprite):void{
+			_hero.gotHit(1);
+		}
+		
 		private function onItemPickup($hero:FlxSprite, $item:FlxSprite):void{
 			$item.kill();
 			if($item is HeartItemSprite)

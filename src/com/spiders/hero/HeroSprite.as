@@ -94,6 +94,10 @@ package com.spiders.hero
 		}
 		public function heroDiesAnimation():void
 		{
+			//Stop flickering
+			this._flickerTimer = 0;
+			this._flicker = false;
+			
 			this.scale.x *= 0.90;		
 			this.scale.y *= 0.90;		
 			this.angle += 20;
