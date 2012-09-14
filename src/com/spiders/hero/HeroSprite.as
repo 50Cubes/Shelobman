@@ -47,7 +47,7 @@ package com.spiders.hero
 		public var HP:int = 5;
 		public var isInvulerableState:Boolean = false;
 		private var _invulnerableTimer:FlxTimer  = new FlxTimer();
-	
+		public var isAlive:Boolean = true;
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------
@@ -71,13 +71,26 @@ package com.spiders.hero
 				
 				isInvulerableState = true;
 				HP -= dmg;
+				if(HP <= 0)
+					heroDies();
 				trace(HP);
 				this.flicker(1);
 			}
 			
 	
 		}
-
+		public function heroDiesRotation():void
+		{
+			this.angle += 15;
+			this.alpha -= 0.01;
+		}
+		private function heroDies():void
+			
+		{
+			isAlive = false;
+			// death xD
+			this.angle = 270;
+		}
 		//--------------------------------------
 		// PUBLIC METHODS
 		//--------------------------------------

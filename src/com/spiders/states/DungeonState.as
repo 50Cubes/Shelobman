@@ -8,6 +8,8 @@ package com.spiders.states
 	import com.spiders.monsters.SpiderSprite;
 	import com.spiders.powerups.FirePowerup;
 	
+	import flash.geom.Point;
+	
 	import org.flixel.*;
 	
 	
@@ -107,7 +109,14 @@ package com.spiders.states
 			
 			moveTowardsHero();
 			
-			handleKeyboardInput();
+			if(_hero.isAlive)
+				handleKeyboardInput();
+			else
+			{
+				_hero.velocity = new FlxPoint(0, 0);
+				_hero.heroDiesRotation();
+								
+			}
 		}
 		
 		//--------------------------------------
@@ -188,7 +197,7 @@ package com.spiders.states
 				var isOutOfRange:Boolean = spiderPythagorean > pythagorean;
 				// aggro
 				
-				if(isWithinHero == true)
+				if(isWithinHero == true && _hero.isAlive)
 				{
 					path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
 					
