@@ -4,7 +4,6 @@ package com.spiders.states
 	import com.spiders.characters.WalkingDirectionalCharacter;
 	import com.spiders.hero.HeroSprite;
 	import com.spiders.map.DungeonMap;
-
 	import com.spiders.misc.Fire;
 	import com.spiders.monsters.SpiderSprite;
 	import com.spiders.powerups.FirePowerup;
@@ -151,32 +150,58 @@ package com.spiders.states
 				//if (spider.animState == SpiderSprite.ANIM_IDLE)
 				FlxG.collide(spider, _spiders);
 				var path:FlxPath;
-
+				
+				var a:Number = spider.spawningPosition.x - _hero.x;
+				var b:Number = spider.spawningPosition.y - _hero.y;
+				var pythagorean:Number = Math.sqrt(a*a + b*b) ;
+				
+				
+				var spiderA:Number = spider.x - _hero.x;
+				var spiderB:Number = spider.y - _hero.y;
+				var spiderPythagorean:Number = Math.sqrt(spiderA*spiderA + spiderB*spiderB) ;
+				
+				var isWithinHero:Boolean = pythagorean < spider.aggroDistance ? true : false;
+				var isOutOfRange:Boolean = spiderPythagorean > pythagorean;
 				// aggro
-				if(Math.sqrt((spider.x * spider.x - _hero.x * _hero.x) + (spider.y * spider.y - _hero.y * _hero.y)) < spider.aggroDistance)
+				
+				if(isWithinHero == true && spider.isAggro == false)
 				{
 					path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
 					
 					//Tell unit to follow path
 					if(path)
 					{
-						spider.followPath(path);					
+						spider.followPath(path);
+						spider.isAggro = true;
 					}
 					//spider.animState = SpiderSprite.ANIM_RUN_DOWN;
-					spider.isAggro = true;
-	
 				}
-				// no aggro, go back to spawning point
-				else
+					// no aggro, go back to spawning point
+				else if(isWithinHero == false && spider.isAggro == true || isOutOfRange)
 				{
-					path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(spider.spawningPosition.x , spider.spawningPosition.y + spider.height / 2));
 					
-					//Tell unit to follow path
-					if(path)
-						spider.followPath(path);
+					var spiderSpawnA:Number = spider.x - spider.spawningPosition.x;
+					var spiderSpawnB:Number = spider.y - spider.spawningPosition.y;
+					var spiderSpawnPythagorean:Number = Math.sqrt(spiderSpawnA*spiderSpawnA + spiderSpawnB*spiderSpawnB);
 					
-					spider.isAggro = false;
+					if(spiderSpawnPythagorean < TILE_WIDTH)
+					{
+						spider.isAggro = false;
+					}
+					else
+					{
+						path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(spider.spawningPosition.x + spider.width / 2, spider.spawningPosition.y + spider.height / 2));
+						
+						//Tell unit to follow path
+						if(path)
+						{
+							spider.followPath(path);
+							
+						}
+					}
 				}
+				
+				
 				
 			}
 		}

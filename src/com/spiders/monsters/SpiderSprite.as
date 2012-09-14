@@ -23,6 +23,7 @@ package com.spiders.monsters
 	
 	import flash.geom.Point;
 	
+	import org.flixel.FlxG;
 	import org.flixel.FlxPath;
 	import org.flixel.FlxPoint;
 	import org.flixel.FlxSprite;
@@ -50,6 +51,7 @@ package com.spiders.monsters
 		public static const ANIM_IDLE:String = "idle";
 		public static const IDLE_FRAMES:Array = [0,1,2,3,4,5,6,7];
 		
+		private static const CHECK_DELAY_MAX:Number = FlxG.framerate;
 		
 		//--------------------------------------
 		// PUBLIC VARIABLES
@@ -58,9 +60,9 @@ package com.spiders.monsters
 		private var _heroAsset:Class;
 		
 		public var spawningPosition:Point;
-		public var aggroDistance:Number = 256;
+		public var aggroDistance:Number = 128;
 		public var isAggro:Boolean = false;
-		
+		private var _checkDelay:Number = SpiderSprite.CHECK_DELAY_MAX;
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------
@@ -79,7 +81,22 @@ package com.spiders.monsters
 			
 			this.acceleration = new FlxPoint(0, 0);
 		}
-		
+		public function doneDelay():Boolean
+		{
+			var doneChecking:Boolean = false;
+			if(_checkDelay >= SpiderSprite.CHECK_DELAY_MAX)
+			{
+				_checkDelay = 0;
+				doneChecking = true;
+			}
+			else
+			{
+				_checkDelay++;
+				doneChecking = false;
+			}
+			return doneChecking; 
+			
+		}
 		//--------------------------------------
 		// PRIVATE VARIABLES
 		//--------------------------------------
