@@ -480,6 +480,7 @@ package org.flixel
 			startIndex = startIndex < 0 ? startIndex = 0 : startIndex;
 			endIndex = endIndex < 0 ? endIndex = 0 : endIndex;
 			
+			endIndex = endIndex > _data.length -1 ? _data.length -1: endIndex;
 			//check that the start and end are clear.
 			if( ((_tileObjects[_data[startIndex]] as FlxTile).allowCollisions > 0) ||
 				((_tileObjects[_data[endIndex]] as FlxTile).allowCollisions > 0) )

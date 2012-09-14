@@ -47,11 +47,13 @@ package com.spiders.hero
 		private var _jumpDiffPoint:FlxPoint;
 		
 		public var HP:int = 5;
-		public var MAX_HP:int = 5;
-		public var HP_REGEN:Number = 30;
+		public var HP_MAX:int = 5;
+		public var HP_REGEN:Number = 500;
 		public var isInvulerableState:Boolean = false;
 		private var _invulnerableTimer:FlxTimer  = new FlxTimer();
 		public var isAlive:Boolean = true;
+		
+		private var _frame:int = 0;
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------
@@ -88,7 +90,8 @@ package com.spiders.hero
 		}
 		public function raiseMaxHPBy(hp:int):void
 		{
-			MAX_HP += hp;
+			HP_MAX += hp;
+			hp = HP_MAX;
 		}
 		public function heroDiesAnimation():void
 		{
@@ -119,7 +122,14 @@ package com.spiders.hero
 		
 		override public function update():void{
 			super.update();
-
+			_frame++;
+			if(isAlive && HP < HP_MAX)
+			{
+				if(_frame % HP_REGEN == 0)
+					HP++;
+			}
+				trace("HP " + HP);
+				
 			if(this.isJumping){
 				//Update the jumping pseudo-tween
 				var now:Number = new Date().time;

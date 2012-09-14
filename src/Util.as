@@ -81,6 +81,7 @@ package
 			var heroTileY:Number = tile.y * DungeonState.TILE_HEIGHT;		
 			return new FlxPoint(heroTileX, heroTileY);
 		}
+		
 		//--------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------

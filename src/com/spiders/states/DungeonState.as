@@ -101,13 +101,20 @@ package com.spiders.states
 			
 			_spiders = new FlxGroup();
 			var spider:SpiderSprite;
+			
+
 			for(var i:int = 0; i < 20; i++)
 			{
-				spider = new SpiderSprite(i*TILE_WIDTH, 0);
+				var openTiles:Array = _map.getTileCoords(0);
+				var tileIndex:int = Util.randInclusive(0, openTiles.length-1);
+				var point:FlxPoint = openTiles[tileIndex] as FlxPoint;
 				
-				//spider = new SpiderSprite(Util.randInclusive(100,Util.STAGE_WIDTH-100), Util.randInclusive(100,Util.STAGE_HEIGHT-100));
+				spider = new SpiderSprite(point.x, point.y);
 				_spiders.add(spider);
 				add(spider);
+				
+				//spider = new SpiderSprite(Util.randInclusive(100,Util.STAGE_WIDTH-100), Util.randInclusive(100,Util.STAGE_HEIGHT-100));
+			
 			}
 			
 			_fires = new FlxGroup();
