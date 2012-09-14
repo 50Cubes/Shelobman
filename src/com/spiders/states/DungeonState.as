@@ -102,15 +102,20 @@ package com.spiders.states
 			add(_hero);
 			
 			initItems();
+			var openTiles:Array = _map.getTileCoords(0);
 			
 			_spiders = new FlxGroup();
 			var spider:SpiderSprite;
+			var point:FlxPoint;
 
-			for(var i:int = 0; i < 20; i++)
+			
+			for(var i:int = 0; i < 2; i++)
 			{
-				var openTiles:Array = _map.getTileCoords(0);
-				var tileIndex:int = Util.randInclusive(0, openTiles.length-1);
-				var point:FlxPoint = openTiles[tileIndex] as FlxPoint;
+			//	var tileIndex:int = Util.randInclusive(0, openTiles.length-1);
+			//	point = openTiles[tileIndex] as FlxPoint;
+				point = openTiles[3+i] as FlxPoint;
+				trace("point ");
+				trace(point.x + " " + point.y);
 				
 				spider = new SpiderSprite(point.x, point.y);
 				_spiders.add(spider);
@@ -281,17 +286,7 @@ package com.spiders.states
 				
 				if(isWithinAggroHero == true && _hero.isAlive)
 				{
-					path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
-					
-					//Tell unit to follow path
-					if(path)
-					{
-						spider.followPath(path);
-						spider.isAggro = true;
-					}
-				}
-				else if(isWithinGiveupHero == true && _hero.isAlive)
-				{
+					trace("if isWithinAggroHero");
 					path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
 					
 					//Tell unit to follow path
@@ -303,16 +298,38 @@ package com.spiders.states
 				}
 				else
 				{
-					spider.velocity = new FlxPoint(0, 0);
-					path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(spider.spawningPosition.x, spider.spawningPosition.y));
-					
-					//Tell unit to follow path
-					if(path)
+					trace("else ");
+					if(isWithinGiveupHero == true && _hero.isAlive && spider.isAggro == true)
 					{
-						spider.followPath(path);
+						trace("else if -- isWithinGiveupHero");
+						path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
 						
+						//Tell unit to follow path
+						if(path)
+						{
+							spider.followPath(path);
+						}
+					}
+					else
+					{
+		
+						path = _map.findPath(new FlxPoint(spider.x, spider.y), spider.spawningPosition);
+						spider.isAggro = false;
+						//Tell unit to follow path
+					
+						if(path)
+						{
+							spider.followPath(path);
+							
+						}
+						if(spider.pathSpeed == 0)
+						{
+							trace("else else");
+							spider.velocity = new FlxPoint(0, 0);
+						}
 					}
 				}
+				
 			}
 		}
 		

@@ -142,7 +142,6 @@ package com.spiders.hero
 				if(_frame % HP_REGEN == 0)
 					HP++;
 			}
-				trace("HP " + HP);
 				
 			if(this.isJumping){
 				//Update the jumping pseudo-tween
