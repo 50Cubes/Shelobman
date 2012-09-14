@@ -31,15 +31,19 @@ package com.spiders.hero
 		[Embed(source = 'assets/SpriteHero_WalkFront.png')]
 		private var _heroAsset:Class;
 		
+		public var animState:String = ANIM_IDLE;
+		
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------
 		public function HeroSprite(X:Number=0, Y:Number=0)
 		{
-			super(X, Y, _heroAsset);
+			super(X, Y);
 			
-			this.addAnimation(ANIM_RUN, RUN_FRAMES);
-			this.addAnimation(ANIM_IDLE, IDLE_FRAMES);
+			this.loadGraphic(_heroAsset, true);
+			
+			this.addAnimation(ANIM_RUN, RUN_FRAMES, 0, true);
+			this.addAnimation(ANIM_IDLE, IDLE_FRAMES, 0, true);
 			
 			this.play(ANIM_IDLE);
 		}
@@ -47,15 +51,22 @@ package com.spiders.hero
 		//--------------------------------------
 		// PUBLIC METHODS
 		//--------------------------------------
+		
 		override public function followPath(Path:FlxPath, Speed:Number=100, Mode:uint=PATH_FORWARD, AutoRotate:Boolean=false):void{
-			this.play(ANIM_RUN);
+			if(animState != ANIM_RUN){
+				animState = ANIM_RUN;
+				this.play(ANIM_RUN);
+			}
 			
 			Path.drawDebug();
 			super.followPath(Path, Speed, Mode, AutoRotate);
 		}
 		
 		override public function stopFollowingPath(DestroyPath:Boolean=false):void{
-			this.play(ANIM_IDLE);
+			if(animState != ANIM_IDLE){
+				animState = ANIM_IDLE;
+				this.play(ANIM_IDLE);
+			}
 			
 			super.stopFollowingPath(DestroyPath);
 		}

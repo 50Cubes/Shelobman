@@ -97,6 +97,7 @@ package com.spiders.states
 				_hero.followPath(simplePath);
 			}else{
 				_hero.stopFollowingPath(true);
+				_hero.velocity.x = _hero.velocity.y = 0;
 			}
 		}
 		
