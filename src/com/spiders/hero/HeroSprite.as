@@ -91,7 +91,7 @@ package com.spiders.hero
 		public function raiseMaxHPBy(hp:int):void
 		{
 			HP_MAX += hp;
-			hp = HP_MAX;
+			this.HP = HP_MAX;
 		}
 		public function heroDiesAnimation():void
 		{

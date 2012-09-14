@@ -53,7 +53,7 @@ package com.spiders.states
 		private var _spiders:FlxGroup;
 		private var _items:FlxGroup;
 		
-		private var _firePowerup:FirePowerup;
+		//private var _firePowerup:FirePowerup;
 		private var _fires:FlxGroup;
 		
 		
@@ -100,9 +100,9 @@ package com.spiders.states
 			
 			initItems();
 			
-			_firePowerup = new FirePowerup(2 * TILE_WIDTH, 0);
-			add(_firePowerup);
-			
+//			_firePowerup = new FirePowerup(2 * TILE_WIDTH, 0);
+//			add(_firePowerup);
+//			
 			_spiders = new FlxGroup();
 			var spider:SpiderSprite;
 			
@@ -132,31 +132,32 @@ package com.spiders.states
 		{
 			_items = new FlxGroup();
 			
-			var floatingItem:FloatingItemSprite = new FloatingItemSprite(0,0,_bootItem);
+			var floatingItem:ShoeItemSprite = new ShoeItemSprite(0,90,_bootItem);
 			add(floatingItem);
 			_items.add(floatingItem);
 			
-			var btorchItem:FloatingItemSprite = new FloatingItemSprite(0,30,_candleItem);
-			add(btorchItem);
-			_items.add(btorchItem);
+			var candleItem:CandleItemSprite = new CandleItemSprite(0,30,_candleItem);
+			add(candleItem);
+			_items.add(candleItem);
 			
 			var heartItem:HeartItemSprite = new HeartItemSprite(0,60,_heartItem);
 			add(heartItem);
 			_items.add(heartItem);
 			
-			var mbootItem:FloatingItemSprite = new FloatingItemSprite(0,90,_mbootItem);
-			add(mbootItem);
-			_items.add(mbootItem);
+//			var mbootItem:ShoeItemSprite = new ShoeItemSprite(0,90,_mbootItem);
+//			add(mbootItem);
+//			_items.add(mbootItem);
 			
 //			var torchItem:FloatingItemSprite = new FloatingItemSprite(0,120,_torchItem);
 //			add(torchItem);
 //			_items.add(torchItem);
 			
-			var firebombItem:FloatingItemSprite = new FloatingItemSprite(0,150,_firebombItem);
+			firebombItem = new PotionItemSprite(0,150,_firebombItem);
 			add(firebombItem);
 			_items.add(firebombItem);
 			
 		}
+		private var firebombItem:PotionItemSprite;
 		override public function destroy():void{
 			super.destroy();
 			
@@ -170,7 +171,7 @@ package com.spiders.states
 			
 			
 			FlxG.collide(this._map, this._hero);
-			FlxG.overlap(_hero, _firePowerup, onFirePickup);
+			//FlxG.overlap(_hero, firebombItem, onFirePickup);
 			
 			FlxG.overlap(_spiders, _fires, onSpidersInFire);
 			FlxG.overlap(_hero, _items, onItemPickup);
@@ -356,10 +357,10 @@ package com.spiders.states
 		//--------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------
-		private function onFirePickup($hero:FlxObject, $powerup:FlxObject):void{
-			_firePowerup.kill();
-			_hero.canFire = true;
-		}
+//		private function onFirePickup($hero:FlxObject, $powerup:FlxObject):void{
+//			firebombItem.kill();
+//			_hero.canFire = true;
+//		}
 		
 		private function onFireSnuff(fire:Fire):void{
 			fire.kill();
@@ -375,6 +376,21 @@ package com.spiders.states
 			if($item is HeartItemSprite)
 			{
 				_hero.raiseMaxHPBy(($item as HeartItemSprite).health);
+				_statusBar.updateHealth(_hero.HP);
+			}
+			else if ($item is ShoeItemSprite)
+			{
+				_statusBar.showShoe(true);
+			}
+			else if ($item is CandleItemSprite)
+			{
+				_statusBar.showCandle(true);
+			}
+			else if ($item is PotionItemSprite)
+			{
+				_statusBar.showPotion(true);
+				firebombItem.kill();
+				_hero.canFire = true;
 			}
 			_items.remove($item, true);
 		}
