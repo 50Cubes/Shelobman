@@ -11,7 +11,7 @@ package com.spiders.powerups
 	 * @email 73@50cubes.com
 	 * @since Sep 13, 2012
 	 */
-	public class JumpPowerup extends FlxSprite
+	public class JumpPowerup extends FloatingItemSprite
 	{
 		
 		//--------------------------------------

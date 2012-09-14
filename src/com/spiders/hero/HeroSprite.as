@@ -74,7 +74,6 @@ package com.spiders.hero
 		{
 			if(flickering == false)
 			{
-				
 				isInvulerableState = true;
 				HP -= dmg;
 				if(HP <= 0)
@@ -100,6 +99,17 @@ package com.spiders.hero
 			this.angle += 20;
 			this.alpha -= 0.01;
 		}
+		
+		override public function revive():void{
+			super.revive();
+			this.isAlive = true;
+			HP = HP_MAX;
+			
+			this.scale.x = this.scale.y = 1;
+			this.angle = 0;
+			this.alpha = 1;
+		}
+		
 		private function heroDies():void
 			
 		{
@@ -142,14 +152,13 @@ package com.spiders.hero
 					this.x = _jumpDestWorldPoint.x;
 					this.y = _jumpDestWorldPoint.y;
 				}else{
-					//Make a parabolic y offset for jumping
+					//Make a y offset for jumping
 					var yJumpOffset:Number;
 					if(now - _jumpStartTime < JUMP_DURATION/2){
 						yJumpOffset = -JUMP_Y_PEAK * (now - _jumpStartTime)/JUMP_DURATION;
 					}else{
 						yJumpOffset = -JUMP_Y_PEAK * ((_jumpStartTime + JUMP_DURATION) - now)/JUMP_DURATION;
 					}
-					 //PSEUDO_GRAV_CONST * (timeOffset * timeOffset) + JUMP_Y_PEAK;
 					this.y = _jumpStartWorldPoint.y + (now - _jumpStartTime)/JUMP_DURATION * _jumpDiffPoint.y + yJumpOffset;
 					this.x = _jumpStartWorldPoint.x + (now - _jumpStartTime)/JUMP_DURATION * _jumpDiffPoint.x;
 				}

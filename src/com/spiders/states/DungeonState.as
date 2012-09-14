@@ -7,6 +7,7 @@ package com.spiders.states
 	import com.spiders.misc.Fire;
 	import com.spiders.monsters.SpiderSprite;
 	import com.spiders.powerups.FirePowerup;
+	import com.spiders.powerups.JumpPowerup;
 	
 	import flash.geom.Point;
 	
@@ -30,6 +31,8 @@ package com.spiders.states
 		public static const TILE_HEIGHT:Number = 64;
 		public static const AGGRO_DISTANCE:Number = 512;
 		public static const MAX_FIRES:int = 3;
+		
+		public static var HERO_START_POINT:FlxPoint = new FlxPoint(2 * TILE_WIDTH, 2 * TILE_HEIGHT);
 		
 		//--------------------------------------
 		// VARIABLES
@@ -91,13 +94,10 @@ package com.spiders.states
 			_map.loadMap(new _dataMap, _imgTiles, TILE_WIDTH, TILE_HEIGHT, 0, 1);
 			add(_map);
 			
-			_hero = new HeroSprite(0, 0);
+			_hero = new HeroSprite(HERO_START_POINT.x, HERO_START_POINT.y);
 			add(_hero);
 			
 			initItems();
-			
-			_firePowerup = new FirePowerup(2 * TILE_WIDTH, 0);
-			add(_firePowerup);
 			
 			_spiders = new FlxGroup();
 			var spider:SpiderSprite;
@@ -119,35 +119,33 @@ package com.spiders.states
 			
 			_fires = new FlxGroup();
 			
-			
-			
 			FlxG.camera.follow(_hero);
 		}
 		private function initItems():void
 		{
 			_items = new FlxGroup();
 			
-			var floatingItem:FloatingItemSprite = new FloatingItemSprite(0,0,_bootItem);
-			add(floatingItem);
-			_items.add(floatingItem);
+			var bootItem:JumpPowerup = new JumpPowerup(TILE_WIDTH,2*TILE_HEIGHT,_bootItem);
+			add(bootItem);
+			_items.add(bootItem);
 			
-			var btorchItem:FloatingItemSprite = new FloatingItemSprite(0,30,_candleItem);
+			var btorchItem:FloatingItemSprite = new FloatingItemSprite(1.5*TILE_WIDTH,2*TILE_HEIGHT,_candleItem);
 			add(btorchItem);
 			_items.add(btorchItem);
 			
-			var heartItem:HeartItemSprite = new HeartItemSprite(0,60,_heartItem);
+			var heartItem:HeartItemSprite = new HeartItemSprite(3*TILE_WIDTH,2*TILE_HEIGHT,_heartItem);
 			add(heartItem);
 			_items.add(heartItem);
 			
-			var mbootItem:FloatingItemSprite = new FloatingItemSprite(0,90,_mbootItem);
+			var mbootItem:JumpPowerup = new JumpPowerup(2*TILE_WIDTH,2*TILE_HEIGHT,_mbootItem);
 			add(mbootItem);
 			_items.add(mbootItem);
 			
-//			var torchItem:FloatingItemSprite = new FloatingItemSprite(0,120,_torchItem);
+//			var torchItem:FloatingItemSprite = new FloatingItemSprite(TILE_WIDTH,2*TILE_HEIGHT,_torchItem);
 //			add(torchItem);
 //			_items.add(torchItem);
 			
-			var firebombItem:FloatingItemSprite = new FloatingItemSprite(0,150,_firebombItem);
+			var firebombItem:FirePowerup = new FirePowerup(3*TILE_WIDTH,4*TILE_HEIGHT,_firebombItem);
 			add(firebombItem);
 			_items.add(firebombItem);
 			
@@ -163,7 +161,6 @@ package com.spiders.states
 			super.update();
 			
 			FlxG.collide(this._map, this._hero);
-			FlxG.overlap(_hero, _firePowerup, onFirePickup);
 			
 			FlxG.overlap(_spiders, _fires, onSpidersInFire);
 			FlxG.overlap(_hero, _items, onItemPickup);
@@ -176,7 +173,12 @@ package com.spiders.states
 			{
 				_hero.velocity = new FlxPoint(0, 0);
 				_hero.heroDiesAnimation();
-								
+				if(_hero.alpha < .05){
+					//All right, you're done dying.
+					_hero.revive();
+					_hero.x = HERO_START_POINT.x;
+					_hero.y = HERO_START_POINT.y;
+				}
 			}
 		}
 		
@@ -184,11 +186,12 @@ package com.spiders.states
 		// PROTECTED & PRIVATE METHODS
 		//--------------------------------------							
 		private function handleKeyboardInput():void{
-			if(FlxG.keys.F){
+			if(FlxG.keys.justPressed("F")){
 				if(_hero.canFire && _fires.length < MAX_FIRES){
 					//Kill them with fire
-					var fireTilePoint:FlxPoint = getTileCoordInFrontOfHero();
-					var fireWorldPoint:FlxPoint = tileToWorldCoord(fireTilePoint);
+					//var fireTilePoint:FlxPoint = getTileCoordInFrontOfHero();
+					//var fireWorldPoint:FlxPoint = getWorldCoordInFrontOfHero();
+					var fireWorldPoint:FlxPoint = getWorldCoordTilesInFrontOfHero(1);
 					
 					var newFire:Fire = new Fire(fireWorldPoint.x, fireWorldPoint.y, null, onFireSnuff);
 					this._fires.add(newFire);
@@ -196,9 +199,9 @@ package com.spiders.states
 				}
 			}
 			
-			if(FlxG.keys.R){
-				//if(_hero.canJump && !_hero.isJumping){
-				if(!_hero.isJumping){
+			if(FlxG.keys.justPressed("R")){
+				if(_hero.canJump && !_hero.isJumping){
+				//if(!_hero.isJumping){
 					//JUMP!
 					var jumpPoint:FlxPoint = getWorldCoordTilesInFrontOfHero(2);
 					
@@ -229,10 +232,7 @@ package com.spiders.states
 		}
 		private function doDamageToHero($spider:SpiderSprite, $hero:HeroSprite):void
 		{
-
-	
-				$hero.gotHit(1);
-			
+			$hero.gotHit(1);
 		}
 		private function moveTowardsHero():void
 		{
@@ -365,6 +365,12 @@ package com.spiders.states
 			if($item is HeartItemSprite)
 			{
 				_hero.raiseMaxHPBy(($item as HeartItemSprite).health);
+			}
+			if($item is JumpPowerup){
+				_hero.canJump = true;
+			}
+			if($item is FirePowerup){
+				_hero.canFire = true;
 			}
 			_items.remove($item, true);
 		}
