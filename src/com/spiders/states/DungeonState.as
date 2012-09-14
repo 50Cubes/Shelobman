@@ -58,8 +58,8 @@ package com.spiders.states
 		[Embed(source = 'assets/bootsheet.png')]
 		private var _bootItem:Class;
 		
-		[Embed(source = 'assets/btorchsheet.png')]
-		private var _btorchItem:Class;
+		[Embed(source = 'assets/candlesheet.png')]
+		private var _candleItem:Class;
 		
 		[Embed(source = 'assets/firebombsheet.png')]
 		private var _firebombItem:Class;
@@ -70,8 +70,8 @@ package com.spiders.states
 		[Embed(source = 'assets/mbootsheet.png')]
 		private var _mbootItem:Class;
 		
-		[Embed(source = 'assets/torchsheet.png')]
-		private var _torchItem:Class;
+//		[Embed(source = 'assets/torchsheet.png')]
+//		private var _torchItem:Class;
 		
 		//--------------------------------------
 		// CONSTRUCTOR
@@ -131,7 +131,7 @@ package com.spiders.states
 			add(floatingItem);
 			_items.add(floatingItem);
 			
-			var btorchItem:FloatingItemSprite = new FloatingItemSprite(0,30,_btorchItem);
+			var btorchItem:FloatingItemSprite = new FloatingItemSprite(0,30,_candleItem);
 			add(btorchItem);
 			_items.add(btorchItem);
 			
@@ -143,9 +143,9 @@ package com.spiders.states
 			add(mbootItem);
 			_items.add(mbootItem);
 			
-			var torchItem:FloatingItemSprite = new FloatingItemSprite(0,120,_torchItem);
-			add(torchItem);
-			_items.add(torchItem);
+//			var torchItem:FloatingItemSprite = new FloatingItemSprite(0,120,_torchItem);
+//			add(torchItem);
+//			_items.add(torchItem);
 			
 			var firebombItem:FloatingItemSprite = new FloatingItemSprite(0,150,_firebombItem);
 			add(firebombItem);
@@ -242,7 +242,7 @@ package com.spiders.states
 				//Find path to goal
 				//if (spider.animState == SpiderSprite.ANIM_IDLE)
 				FlxG.collide(spider, _spiders);
-				FlxG.collide(spider, _hero, doDamageToHero);
+				FlxG.overlap(spider, _hero, doDamageToHero);
 				var path:FlxPath;
 				
 				var a:Number = spider.spawningPosition.x - _hero.x;
