@@ -56,7 +56,7 @@ package com.spiders.characters
 		{
 			super(X, Y, SimpleGraphic);
 			
-			this.addAnimation(ANIM_RUN_UP, RUN_UP_FRAMES, 2, true);
+			this.addAnimation(ANIM_RUN_UP, RUN_UP_FRAMES, 5, true);
 			this.addAnimation(ANIM_RUN_DOWN, RUN_DOWN_FRAMES, 5, true);
 			this.addAnimation(ANIM_RUN_LEFT, RUN_LEFT_FRAMES, 5, true);
 			this.addAnimation(ANIM_RUN_RIGHT, RUN_RIGHT_FRAMES, 5, true);

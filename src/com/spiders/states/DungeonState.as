@@ -4,6 +4,7 @@ package com.spiders.states
 	import com.spiders.hero.HeroSprite;
 	import com.spiders.map.DungeonMap;
 	import com.spiders.powerups.FirePowerup;
+	import com.spiders.monsters.SpiderSprite;
 	
 	import org.flixel.*;
 	
@@ -41,6 +42,7 @@ package com.spiders.states
 		private var _map:DungeonMap;
 		
 		private var _hero:HeroSprite;
+		private var _spiders:Vector.<SpiderSprite>;
 		
 		private var _firePowerup:FirePowerup;
 		
@@ -68,6 +70,14 @@ package com.spiders.states
 			_firePowerup = new FirePowerup(2 * TILE_WIDTH, 0);
 			add(_firePowerup);
 			
+			_spiders = new Vector.<SpiderSprite>();
+			var spider:SpiderSprite;
+			for(var i:int = 0; i < 20; i++)
+			{
+				spider = new SpiderSprite(Util.randInclusive(100,Util.STAGE_WIDTH-100), Util.randInclusive(100,Util.STAGE_HEIGHT-100));
+				_spiders.push(spider);
+				add(spider);
+			}
 			FlxG.camera.follow(_hero);
 		}
 		
@@ -83,6 +93,8 @@ package com.spiders.states
 			
 			FlxG.collide(this._map, this._hero);
 			FlxG.overlap(_hero, _firePowerup, onFirePickup);
+			
+			moveTowardsHero();
 			
 			handleKeyboardInput();
 		}
@@ -107,11 +119,27 @@ package com.spiders.states
 			}else{
 				_hero.velocity.x = _hero.velocity.y = 0;
 			}
-			
+
 			_hero.acceleration.x = _hero.acceleration.y = 0;
 			_hero.drag.x = _hero.drag.y = 0;
 		}
-		
+		private function moveTowardsHero():void
+		{
+			var target:FlxSprite = _hero;
+			for each (var spider:SpiderSprite in _spiders)
+			{	
+				//Find path to goal
+				//if (spider.animState == SpiderSprite.ANIM_IDLE)
+				
+				var path:FlxPath = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
+				
+				//Tell unit to follow path
+				if(path)
+					spider.followPath(path);
+				//spider.animState = SpiderSprite.ANIM_RUN_DOWN;
+				
+			}
+		}
 		//--------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------
