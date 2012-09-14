@@ -19,6 +19,8 @@
  */
 package com.spiders.monsters
 {
+	import com.spiders.characters.WalkingDirectionalCharacter;
+	
 	import flash.geom.Point;
 	
 	import org.flixel.FlxPoint;
@@ -33,7 +35,7 @@ package com.spiders.monsters
 	 * @author 37@50cubes.com
 	 * @since Sep 13, 2012
 	 */
-	public class SpiderSprite extends FlxSprite
+	public class SpiderSprite extends WalkingDirectionalCharacter
 	{
 		
 		//--------------------------------------
@@ -54,7 +56,6 @@ package com.spiders.monsters
 		[Embed(source = 'assets/spidersheet.png')]
 		private var _heroAsset:Class;
 		
-		public var animState:String = ANIM_IDLE;
 		private var _spawningPosition:Point;
 		
 		//--------------------------------------
@@ -67,18 +68,13 @@ package com.spiders.monsters
 			
 			this.loadGraphic(_heroAsset, true);
 			
-			this.addAnimation(ANIM_RUN_DOWN, RUN_DOWN_FRAMES, 5, true);
-			this.addAnimation(ANIM_IDLE, IDLE_FRAMES, 5, true);
-			
-			this.offset.x = 32;
-			this.offset.y = 32;
+			this.offset.x = 16;
+			this.offset.y = 48;
 			this.width = 32;
-			this.height = 32;
+			this.height = 16;
 			this.centerOffsets();
 			
 			this.acceleration = new FlxPoint(0, 0);
-			
-			this.play(ANIM_IDLE);
 		}
 		
 		//--------------------------------------
@@ -89,7 +85,10 @@ package com.spiders.monsters
 		//--------------------------------------
 		// GETTER/SETTERS
 		//--------------------------------------
-		
+		public function getSpawningPosition():Point
+		{
+			return _spawningPosition;
+		}
 		
 		//--------------------------------------
 		// PUBLIC METHODS
