@@ -53,6 +53,25 @@ package com.spiders.states
 		private var _firePowerup:FirePowerup;
 		private var _fires:FlxGroup;
 		
+		
+		[Embed(source = 'assets/bootsheet.png')]
+		private var _bootItem:Class;
+		
+		[Embed(source = 'assets/btorchsheet.png')]
+		private var _btorchItem:Class;
+		
+		[Embed(source = 'assets/firebombsheet.png')]
+		private var _firebombItem:Class;
+		
+		[Embed(source = 'assets/heartsheet.png')]
+		private var _heartItem:Class;
+		
+		[Embed(source = 'assets/mbootsheet.png')]
+		private var _mbootItem:Class;
+		
+		[Embed(source = 'assets/torchsheet.png')]
+		private var _torchItem:Class;
+		
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------
@@ -74,6 +93,8 @@ package com.spiders.states
 			_hero = new HeroSprite(0, 0);
 			add(_hero);
 			
+			initItems();
+			
 			_firePowerup = new FirePowerup(2 * TILE_WIDTH, 0);
 			add(_firePowerup);
 			
@@ -92,7 +113,26 @@ package com.spiders.states
 			
 			FlxG.camera.follow(_hero);
 		}
-		
+		private function initItems():void
+		{
+			var floatingItem:FloatingItemSprite = new FloatingItemSprite(0,0,_bootItem);
+			add(floatingItem);
+			
+			var btorchItem:FloatingItemSprite = new FloatingItemSprite(0,30,_btorchItem);
+			add(btorchItem);
+			
+			var heartItem:FloatingItemSprite = new FloatingItemSprite(0,60,_heartItem);
+			add(heartItem);
+			
+			var mbootItem:FloatingItemSprite = new FloatingItemSprite(0,90,_mbootItem);
+			add(mbootItem);
+			
+			var torchItem:FloatingItemSprite = new FloatingItemSprite(0,120,_torchItem);
+			add(torchItem);
+			
+			var firebombItem:FloatingItemSprite = new FloatingItemSprite(0,150,_firebombItem);
+			add(firebombItem);
+		}
 		override public function destroy():void{
 			super.destroy();
 			
@@ -114,7 +154,7 @@ package com.spiders.states
 			else
 			{
 				_hero.velocity = new FlxPoint(0, 0);
-				_hero.heroDiesRotation();
+				_hero.heroDiesAnimation();
 								
 			}
 		}

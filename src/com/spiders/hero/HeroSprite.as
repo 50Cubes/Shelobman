@@ -72,15 +72,20 @@ package com.spiders.hero
 				isInvulerableState = true;
 				HP -= dmg;
 				if(HP <= 0)
+				{
 					heroDies();
+					this.scale = new FlxPoint(40, 40);					
+				}
 				trace(HP);
 				this.flicker(1);
 			}
 			
 	
 		}
-		public function heroDiesRotation():void
+		public function heroDiesAnimation():void
 		{
+			this.scale.x *= 0.9;		
+			this.scale.y *= 0.9;		
 			this.angle += 15;
 			this.alpha -= 0.01;
 		}
@@ -90,6 +95,7 @@ package com.spiders.hero
 			isAlive = false;
 			// death xD
 			this.angle = 270;
+		//	SoundManager.playHeroDying();
 		}
 		//--------------------------------------
 		// PUBLIC METHODS
