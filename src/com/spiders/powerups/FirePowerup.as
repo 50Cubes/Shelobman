@@ -10,7 +10,7 @@ package com.spiders.powerups
 	 * @email 73@50cubes.com
 	 * @since Sep 13, 2012
 	 */
-	public class FirePowerup extends FlxSprite
+	public class FirePowerup extends FloatingItemSprite
 	{
 		
 		//--------------------------------------
@@ -30,12 +30,13 @@ package com.spiders.powerups
 		{
 			super(X, Y, SimpleGraphic);
 			
-			this.width = 32;
-			this.height = 32;
-			this.offset.x = 16;
-			this.offset.y = 16;
+			/*
+			this.width = 48;
+			this.height = 48;
+			this.centerOffsets();
 			
 			this.color = 0xFF0000;
+			*/
 		}
 		
 		//--------------------------------------
