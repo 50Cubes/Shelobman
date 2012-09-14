@@ -56,7 +56,9 @@ package com.spiders.monsters
 		[Embed(source = 'assets/spidersheet.png')]
 		private var _heroAsset:Class;
 		
-		private var _spawningPosition:Point;
+		public var spawningPosition:Point;
+		public var aggroDistance:Number = 256;
+		public var isAggro:Boolean = false;
 		
 		//--------------------------------------
 		// CONSTRUCTOR
@@ -64,7 +66,7 @@ package com.spiders.monsters
 		public function SpiderSprite(X:Number=0, Y:Number=0, SimpleGraphic:Class=null)
 		{
 			super(X, Y);
-			_spawningPosition = new Point(X, Y);
+			spawningPosition = new Point(X, Y);
 			
 			this.loadGraphic(_heroAsset, true);
 			
@@ -85,10 +87,10 @@ package com.spiders.monsters
 		//--------------------------------------
 		// GETTER/SETTERS
 		//--------------------------------------
-		public function getSpawningPosition():Point
-		{
-			return _spawningPosition;
-		}
+//		public function getSpawningPosition():Point
+//		{
+//			return _spawningPosition;
+//		}
 		
 		//--------------------------------------
 		// PUBLIC METHODS

@@ -474,9 +474,12 @@ package org.flixel
 		public function findPath(Start:FlxPoint,End:FlxPoint,Simplify:Boolean=true,RaySimplify:Boolean=false):FlxPath
 		{
 			//figure out what tile we are starting and ending on.
-			var startIndex:uint = int((Start.y-y)/_tileHeight) * widthInTiles + int((Start.x-x)/_tileWidth);
-			var endIndex:uint = int((End.y-y)/_tileHeight) * widthInTiles + int((End.x-x)/_tileWidth);
-
+			var startIndex:int = int((Start.y-y)/_tileHeight) * widthInTiles + int((Start.x-x)/_tileWidth);
+			var endIndex:int = int((End.y-y)/_tileHeight) * widthInTiles + int((End.x-x)/_tileWidth);
+			
+			startIndex = startIndex < 0 ? startIndex = 0 : startIndex;
+			endIndex = endIndex < 0 ? endIndex = 0 : endIndex;
+			
 			//check that the start and end are clear.
 			if( ((_tileObjects[_data[startIndex]] as FlxTile).allowCollisions > 0) ||
 				((_tileObjects[_data[endIndex]] as FlxTile).allowCollisions > 0) )

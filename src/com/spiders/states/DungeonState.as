@@ -3,8 +3,8 @@ package com.spiders.states
 {
 	import com.spiders.hero.HeroSprite;
 	import com.spiders.map.DungeonMap;
-	import com.spiders.powerups.FirePowerup;
 	import com.spiders.monsters.SpiderSprite;
+	import com.spiders.powerups.FirePowerup;
 	
 	import org.flixel.*;
 	
@@ -24,6 +24,7 @@ package com.spiders.states
 		//--------------------------------------
 		public static const TILE_WIDTH:Number = 64;
 		public static const TILE_HEIGHT:Number = 64;
+		public static const AGGRO_DISTANCE:Number = 512;
 		
 		//--------------------------------------
 		// VARIABLES
@@ -42,7 +43,7 @@ package com.spiders.states
 		private var _map:DungeonMap;
 		
 		private var _hero:HeroSprite;
-		private var _spiders:Vector.<SpiderSprite>;
+		private var _spiders:FlxGroup;
 		
 		private var _firePowerup:FirePowerup;
 		
@@ -70,12 +71,12 @@ package com.spiders.states
 			_firePowerup = new FirePowerup(2 * TILE_WIDTH, 0);
 			add(_firePowerup);
 			
-			_spiders = new Vector.<SpiderSprite>();
+			_spiders = new FlxGroup();
 			var spider:SpiderSprite;
 			for(var i:int = 0; i < 20; i++)
 			{
 				spider = new SpiderSprite(Util.randInclusive(100,Util.STAGE_WIDTH-100), Util.randInclusive(100,Util.STAGE_HEIGHT-100));
-				_spiders.push(spider);
+				_spiders.add(spider);
 				add(spider);
 			}
 			FlxG.camera.follow(_hero);
@@ -126,17 +127,34 @@ package com.spiders.states
 		private function moveTowardsHero():void
 		{
 			var target:FlxSprite = _hero;
-			for each (var spider:SpiderSprite in _spiders)
+			for each (var spider:SpiderSprite in _spiders.members)
 			{	
 				//Find path to goal
 				//if (spider.animState == SpiderSprite.ANIM_IDLE)
+				FlxG.collide(spider, _spiders);
+				var path:FlxPath;
 				
-				var path:FlxPath = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
-				
-				//Tell unit to follow path
-				if(path)
-					spider.followPath(path);
-				//spider.animState = SpiderSprite.ANIM_RUN_DOWN;
+				// aggro
+				if(Math.sqrt((spider.x * spider.x - _hero.x * _hero.x) + (spider.y * spider.y - _hero.y * _hero.y)) < spider.aggroDistance)
+				{
+					path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
+					
+					//Tell unit to follow path
+					if(path)
+						spider.followPath(path);
+					//spider.animState = SpiderSprite.ANIM_RUN_DOWN;
+					spider.isAggro = true;
+				}
+				// no aggro, go back to spawning point
+				else
+				{
+					path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(spider.spawningPosition.x , spider.spawningPosition.y + spider.height / 2));
+					
+					//Tell unit to follow path
+					if(path)
+						spider.followPath(path);
+					spider.isAggro = false;
+				}
 				
 			}
 		}
