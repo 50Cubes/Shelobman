@@ -23,6 +23,7 @@ package com.spiders.monsters
 	
 	import flash.geom.Point;
 	
+	import org.flixel.FlxPath;
 	import org.flixel.FlxPoint;
 	import org.flixel.FlxSprite;
 	

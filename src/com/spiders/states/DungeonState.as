@@ -1,8 +1,11 @@
 
 package com.spiders.states
 {
+	import com.spiders.characters.WalkingDirectionalCharacter;
 	import com.spiders.hero.HeroSprite;
 	import com.spiders.map.DungeonMap;
+
+	import com.spiders.misc.Fire;
 	import com.spiders.monsters.SpiderSprite;
 	import com.spiders.powerups.FirePowerup;
 	
@@ -46,6 +49,7 @@ package com.spiders.states
 		private var _spiders:FlxGroup;
 		
 		private var _firePowerup:FirePowerup;
+		private var _fires:FlxGroup;
 		
 		//--------------------------------------
 		// CONSTRUCTOR
@@ -79,6 +83,9 @@ package com.spiders.states
 				_spiders.add(spider);
 				add(spider);
 			}
+			
+			_fires = new FlxGroup();
+			
 			FlxG.camera.follow(_hero);
 		}
 		
@@ -94,6 +101,7 @@ package com.spiders.states
 			
 			FlxG.collide(this._map, this._hero);
 			FlxG.overlap(_hero, _firePowerup, onFirePickup);
+			FlxG.overlap(_spiders, _fires, onSpidersInFire);
 			
 			moveTowardsHero();
 			
@@ -104,6 +112,17 @@ package com.spiders.states
 		// PROTECTED & PRIVATE METHODS
 		//--------------------------------------							
 		private function handleKeyboardInput():void{
+			if(FlxG.keys.F){
+				if(_hero.canFire){
+					var fireTilePoint:FlxPoint = getTileCoordInFrontOfHero();
+					var fireWorldPoint:FlxPoint = tileToWorldCoord(fireTilePoint);
+					
+					var newFire:Fire = new Fire(fireWorldPoint.x, fireWorldPoint.y, null, onFireSnuff);
+					this._fires.add(newFire);
+					add(newFire);
+				}
+			}
+			
 			//Don't worry about updating the hero's animations, he will update himself from his velocity.
 			if(FlxG.keys.W){
 				_hero.velocity.y = -HeroSprite.RUN_SPEED;
@@ -120,7 +139,6 @@ package com.spiders.states
 			}else{
 				_hero.velocity.x = _hero.velocity.y = 0;
 			}
-
 			_hero.acceleration.x = _hero.acceleration.y = 0;
 			_hero.drag.x = _hero.drag.y = 0;
 		}
@@ -133,7 +151,7 @@ package com.spiders.states
 				//if (spider.animState == SpiderSprite.ANIM_IDLE)
 				FlxG.collide(spider, _spiders);
 				var path:FlxPath;
-				
+
 				// aggro
 				if(Math.sqrt((spider.x * spider.x - _hero.x * _hero.x) + (spider.y * spider.y - _hero.y * _hero.y)) < spider.aggroDistance)
 				{
@@ -141,9 +159,12 @@ package com.spiders.states
 					
 					//Tell unit to follow path
 					if(path)
-						spider.followPath(path);
+					{
+						spider.followPath(path);					
+					}
 					//spider.animState = SpiderSprite.ANIM_RUN_DOWN;
 					spider.isAggro = true;
+	
 				}
 				// no aggro, go back to spawning point
 				else
@@ -153,17 +174,63 @@ package com.spiders.states
 					//Tell unit to follow path
 					if(path)
 						spider.followPath(path);
+					
 					spider.isAggro = false;
 				}
 				
 			}
 		}
+		
+		private function getTileCoordInFrontOfHero():FlxPoint{
+			var heroTileX:int = Math.floor(_hero.x / TILE_WIDTH);
+			var heroTileY:int = Math.floor(_hero.y / TILE_HEIGHT);
+			
+			var returnPoint:FlxPoint = new FlxPoint(heroTileX, heroTileY);
+			
+			switch(_hero.animState){
+				case WalkingDirectionalCharacter.ANIM_IDLE_DOWN:
+				case WalkingDirectionalCharacter.ANIM_RUN_DOWN:
+					returnPoint.y += 1;
+					break;
+				case WalkingDirectionalCharacter.ANIM_IDLE_UP:
+				case WalkingDirectionalCharacter.ANIM_RUN_UP:
+					returnPoint.y -= 1;
+					break;
+				case WalkingDirectionalCharacter.ANIM_IDLE_LEFT:
+				case WalkingDirectionalCharacter.ANIM_RUN_LEFT:
+					returnPoint.x -= 1;
+					break;
+				case WalkingDirectionalCharacter.ANIM_IDLE_RIGHT:
+				case WalkingDirectionalCharacter.ANIM_RUN_RIGHT:
+					returnPoint.x += 1;
+					break;
+			}
+			
+			return returnPoint;
+		}
+		
+		private function tileToWorldCoord($tilePoint:FlxPoint):FlxPoint{
+			var retPnt:FlxPoint = new FlxPoint($tilePoint.x, $tilePoint.y);
+			retPnt.x *= TILE_WIDTH;
+			retPnt.y *- TILE_HEIGHT;
+			return retPnt;
+		}
+		
 		//--------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------
 		private function onFirePickup($hero:FlxObject, $powerup:FlxObject):void{
 			_firePowerup.kill();
 			_hero.canFire = true;
+		}
+		
+		private function onFireSnuff(fire:Fire):void{
+			_fires.remove(fire, true);
+			fire.kill();
+		}
+		
+		private function onSpidersInFire($spider:FlxSprite, $fire:FlxSprite):void{
+			this._spiders
 		}
 	}
 }
