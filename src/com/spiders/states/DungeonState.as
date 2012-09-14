@@ -373,9 +373,6 @@ package com.spiders.states
 			_fires.remove(fire, true);
 		}
 		
-		private function onHeroInFire($Hero:FlxSprite, $fire:FlxSprite):void{
-			_hero.gotHit(1);
-		}
 		private function onSpidersInFire($spider:FlxSprite, $fire:FlxSprite):void{
 			$spider.kill();
 			_spiders.remove($spider, true);
