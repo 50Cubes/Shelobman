@@ -1,7 +1,9 @@
 
 package com.spiders.misc
 {
-	import org.flixel.FlxSprite;
+	import flash.events.Event;
+	
+	import org.flixel.*;
 	
 	
 	/**
@@ -17,25 +19,40 @@ package com.spiders.misc
 		//--------------------------------------
 		// CONSTANTS
 		//--------------------------------------
-		
+		public static const FIRE_DURATION:Number = 3000;
 		
 		//--------------------------------------
 		// VARIABLES
 		//--------------------------------------
-		
+		private var createTime:Number;
+		private var _extinguishFunction:Function;
 		
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------
-		public function Fire(X:Number=0, Y:Number=0, SimpleGraphic:Class=null)
+		public function Fire(X:Number=0, Y:Number=0, SimpleGraphic:Class=null, extinguishFunction:Function = null)
 		{
 			super(X, Y, SimpleGraphic);
+			
+			createTime = new Date().time;
+			_extinguishFunction = extinguishFunction;
 		}
 		
 		//--------------------------------------
 		// PUBLIC METHODS
 		//--------------------------------------
-		
+		override public function update():void{
+			super.update();
+			
+			var now:Number = new Date().time;
+			if(now - createTime >= FIRE_DURATION){
+				if(_extinguishFunction != null){
+					_extinguishFunction(this);
+				}else{
+					kill();
+				}
+			}
+		}
 		
 		//--------------------------------------
 		// PROTECTED & PRIVATE METHODS
