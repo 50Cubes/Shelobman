@@ -83,6 +83,7 @@ package
 		
 		private static var _effectItemPickup:FlxSound;
 		private static var _effectJumping:FlxSound;
+		private static var _effectFire:FlxSound;
 		
 		
 		
@@ -101,6 +102,16 @@ package
 		//--------------------------------------
 		// PUBLIC METHODS
 		//--------------------------------------
+		public static function playFire():void
+		{
+			if(_effectFire == null)
+			{
+				_effectFire = new FlxSound();
+				_effectFire.loadEmbedded(_fire, false, true);
+			}
+			_effectFire.play();
+		}
+		
 		public static function playJumping():void
 		{
 			if(_effectJumping == null)

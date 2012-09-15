@@ -13,6 +13,7 @@ package com.spiders.states
 	import com.spiders.tiles.WebTile;
 	
 	import flash.geom.Point;
+	import flash.media.Sound;
 	import flash.utils.Dictionary;
 	
 	import org.flixel.*;
@@ -535,6 +536,7 @@ package com.spiders.states
 					var newFire:Fire = new Fire(fireWorldPoint.x - 13, fireWorldPoint.y - 40, onFireSnuff);
 					this._fires.add(newFire);
 					add(newFire);
+					SoundManager.playFire();
 				}
 			}
 			
@@ -543,7 +545,7 @@ package com.spiders.states
 					var jumpPoint:FlxPoint = getWorldCoordTilesInFrontOfHero(2);
 					
 					_hero.jumpTo(jumpPoint);
-					
+					SoundManager.playJumping();
 					return;
 				}
 			}
@@ -780,7 +782,7 @@ package com.spiders.states
 		}
 		private function onItemPickup($hero:FlxSprite, $item:FlxSprite):void{
 			var message:Array = [];
-			
+			SoundManager.playItemPickup();
 			$item.kill();
 			if($item is HeartItemSprite)
 			{
