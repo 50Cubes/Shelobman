@@ -106,24 +106,40 @@ package com.spiders.hero
 			
 	
 		}
-		public function raiseMaxHPBy(hp:int):void
+		public function increaseMaxHPBy(hp:int):void
 		{
-			if(HP_MAX <= ABSOLUTE_HP_MAX)
+			for(var i:int = 0; i< hp; i++)
 			{
-				HP_MAX += hp;
+				increaseMaxHP();
+			}
+		}
+		public function increaseMaxHP():void
+		{
+			if(HP_MAX < ABSOLUTE_HP_MAX)
+			{
+				HP_MAX++;
 				this.HP = HP_MAX;	
 			}
-			else if(hp < HP_MAX)
+			else if(this.HP < HP_MAX)
 			{
-				this.HP += hp;
+				this.HP++;
 			}
+		}
+		public function healHP():void
+		{
+			if(this.HP < HP_MAX)
+			{
+				this.HP++;
+			}
+	
 		}
 		public function healHPBy(hp:int):void
 		{
-			if(hp < HP_MAX)
+			for (var i:int = 0; i< hp;i++)
 			{
-				this.HP += hp;
+				healHP();
 			}
+		
 		}
 		public function heroDiesAnimation():void
 		{
