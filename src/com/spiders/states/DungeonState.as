@@ -136,6 +136,7 @@ package com.spiders.states
 			add(_statusBar);
 
 			FlxG.camera.follow(_hero);
+			
 		}
 		private function initItems():void
 		{
@@ -178,6 +179,8 @@ package com.spiders.states
 		
 		override public function update():void{
 			super.update();
+			FlxG.worldBounds = new FlxRect(_hero.x - 128, _hero.y - 128, Util.STAGE_WIDTH, Util.STAGE_HEIGHT);
+			//trace("worldBounds -- " + FlxG.worldBounds.x + " " + FlxG.worldBounds.y);
 			
 			updateAndCleanupDeadSpiders();
 			
