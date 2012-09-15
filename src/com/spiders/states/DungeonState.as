@@ -488,7 +488,7 @@ package com.spiders.states
 			}
 		}
 		
-		private function bossBiteHero($hero:HeroSprite, $boss:BossSprite){
+		private function bossBiteHero($hero:HeroSprite, $boss:BossSprite):void{
 			if($hero.isAlive){
 				$hero.gotHit(1);
 			}
