@@ -55,25 +55,25 @@ package
 		[Embed(source = 'assets/sounds/LOZ_Die.mp3')]
 		private static var _linkDieClip:Class;
 		
-		[Embed(source = 'assets/sounds/spider_tarantula_walk_on_leaves.mp3')]
+		[Embed(source = 'assets/sounds/crackle.mp3')]
 		private static var _spiderHiss:Class;
 		
-		[Embed(source = 'assets/sounds/LOZ_Die.mp3')]
+		[Embed(source = 'assets/sounds/fireball.mp3')]
 		private static var _fire:Class;
 
-		[Embed(source = 'assets/sounds/LOZ_Die.mp3')]
+		[Embed(source = 'assets/sounds/jumpboing.mp3')]
 		private static var _jumping:Class;
 
-		[Embed(source = 'assets/sounds/LOZ_Die.mp3')]
+		[Embed(source = 'assets/sounds/itempickup.mp3')]
 		private static var _itemPickup:Class;
 		
-		[Embed(source = 'assets/sounds/LOZ_Die.mp3')]
+		[Embed(source = 'assets/sounds/jumpboing.mp3')]
 		private static var _jumpingEffect:Class;
 		
-		[Embed(source = 'assets/sounds/LOZ_Die.mp3')]
+		[Embed(source = 'assets/sounds/backgroundMusic1.mp3')]
 		private static var _musicBackgroundClip:Class;
 		
-		[Embed(source = 'assets/sounds/LOZ_Die.mp3')]
+		[Embed(source = 'assets/sounds/bossBattleMusic.mp3')]
 		private static var _musicBossClip:Class;
 		
 		// effects
