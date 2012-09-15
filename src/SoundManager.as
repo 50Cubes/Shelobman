@@ -81,6 +81,10 @@ package
 		private static var _effectHeroDyingEffect:FlxSound;
 		private static var _effectSpiderHissing:FlxSound;
 		
+		private static var _effectItemPickup:FlxSound;
+		private static var _effectJumping:FlxSound;
+		
+		
 		
 		// boss
 		
@@ -97,19 +101,28 @@ package
 		//--------------------------------------
 		// PUBLIC METHODS
 		//--------------------------------------
-
-		public static function playBossMusic():void
+		public static function playJumping():void
+		{
+			if(_effectJumping == null)
+			{
+				_effectJumping = new FlxSound();
+				_effectJumping.loadEmbedded(_jumpingEffect, false, true);
+			}
+			_effectJumping.play();
+		}
+		public static function playBackgroundMusic():void
 		{
 			if(_musicBackground == null)
 			{
 				_musicBackground = new FlxSound();
-				_musicBackground.loadEmbedded(_linkDieClip, true, true);
+				_musicBackground.loadEmbedded(_musicBackgroundClip, true, true);
 			}
 			
 			_musicBackground.play();
 		}
-		public static function playBackgroundMusic():void
+		public static function playBossMusic():void
 		{
+			// stop old music
 			if(_musicBackground)
 			{
 				_musicBackground.stop();
@@ -118,9 +131,19 @@ package
 			if(_musicBoss == null)
 			{
 				_musicBoss = new FlxSound();
-				_musicBoss.loadEmbedded(_linkDieClip, true, true);
+				_musicBoss.loadEmbedded(_musicBossClip, true, true);
 			}
 			_musicBoss.play();
+		}
+		
+		public static function playItemPickup():void
+		{
+			if(_effectItemPickup == null)
+			{
+				_effectItemPickup = new FlxSound();
+				_effectItemPickup.loadEmbedded(_itemPickup, true, true);
+			}
+			_effectItemPickup.play();
 		}
 		
 		public static function playHeroDying():void
