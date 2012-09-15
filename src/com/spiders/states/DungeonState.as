@@ -489,6 +489,7 @@ package com.spiders.states
 			}
 			if($item is FirePowerup){
 				_hero.canFire = true;
+				_statusBar.showPotion(true);
 			}
 			_items.remove($item, true);
 		}
