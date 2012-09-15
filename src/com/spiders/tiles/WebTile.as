@@ -22,7 +22,8 @@ package com.spiders.tiles
 		//--------------------------------------
 		// VARIABLES
 		//--------------------------------------
-		
+		[Embed(source = 'assets/webtile.png')]
+		private var _webtile:Class;
 		
 		//--------------------------------------
 		// CONSTRUCTOR
@@ -30,6 +31,9 @@ package com.spiders.tiles
 		public function WebTile(X:int, Y:int, Width:uint, Height:uint)
 		{
 			super(X, Y, Width, Height);
+			this.loadGraphic(_webtile, true);
+			
+
 		}
 		
 		//--------------------------------------

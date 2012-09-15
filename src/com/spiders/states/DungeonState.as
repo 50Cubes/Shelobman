@@ -10,6 +10,7 @@ package com.spiders.states
 	import com.spiders.monsters.SpiderSprite;
 	import com.spiders.powerups.FirePowerup;
 	import com.spiders.powerups.JumpPowerup;
+	import com.spiders.tiles.WebTile;
 	
 	import flash.geom.Point;
 	import flash.utils.Dictionary;
@@ -66,6 +67,7 @@ package com.spiders.states
 		private var _bossSprite:BossSprite;
 		
 		private var _pitGroup:FlxGroup;
+		private var _webGroup:FlxGroup;
 		
 		private var _spidersDeathCount:Dictionary = new Dictionary();
 		
@@ -111,6 +113,9 @@ package com.spiders.states
 		private var spiderXStartLocations:Array = [36,58,61,39,39,38,18,46,61,54,25,26,26,33,32];
 		private var spiderYStartLocations:Array = [22,20,37,54,57,59,27,29,25,38,14,11,9,11,14];
 		
+		private var webXStartLocations:Array = [36,58,61,39,39,38,18,46,61,54,25,26,26,33,32];
+		private var webYStartLocations:Array = [22,20,37,54,57,59,27,29,25,38,14,11,9,11,14];
+		
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------
@@ -150,11 +155,16 @@ package com.spiders.states
 			
 			add(_pitGroup);
 			
+			
+	
+			
+			_webGroup = new FlxGroup();
+			add(_webGroup);
+			
 			_hero = new HeroSprite(HERO_START_POINT.x, HERO_START_POINT.y);
 			add(_hero);
 			
-			
-			
+
 			
 			var openTiles:Array = _map.getTileCoords(0);
 
@@ -164,7 +174,7 @@ package com.spiders.states
 			_spiders = new FlxGroup();
 			var spider:SpiderSprite;
 			var point:FlxPoint;
-			
+			var web:WebTile;
 			/*
 			//Debug spiders
 			var spiderXValues:Array = []; //[30 * TILE_WIDTH];
@@ -188,6 +198,19 @@ package com.spiders.states
 			}
 				
 				/////
+			
+			//Add webs
+			for(var w:int=0 ; w<webXStartLocations.length ; w++){
+				web = new WebTile(webXStartLocations[w] * TILE_WIDTH, webYStartLocations[w] * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+				_webGroup.add(web);
+				add(web);
+			}
+			
+			/////
+
+			
+			
+			
 			
 			_darkFilter = new DarkFilter(-TILE_WIDTH/4 - 5, 0);
 			_darkFilter.scale = new FlxPoint(1.2, 1.2);
@@ -218,6 +241,11 @@ package com.spiders.states
 			_fadeToWhiteSprite.visible = false;
 			add(_fadeToWhiteSprite);
 			
+		}
+		private function hack():void
+		{
+			_hero.canFire = true;
+			_statusBar.showPotion(true);
 		}
 		private function initItems():void
 		{
@@ -333,10 +361,12 @@ package com.spiders.states
 			
 			FlxG.overlap(_spiders, _fires, onSpidersInFire);
 			FlxG.overlap(_bossSprite, _fires, onBossInFire);
+			FlxG.overlap(_webGroup, _fires, onWebsInFire);
 			
 			if(_hero.isAlive && !_hero.isJumping){
 				FlxG.overlap(_hero, _fires, onHeroInFire);
 				FlxG.overlap(_hero, _pitGroup, fallIntoPit);
+				FlxG.collide(_hero, _webGroup);
 			}
 			
 			_statusBar.updateHealth(_hero.HP);
@@ -614,6 +644,12 @@ package com.spiders.states
 				$boss.gotHit(1);
 			}
 		}
+		
+		private function onWebsInFire($webs:WebTile, $fire:FlxSprite):void
+		{
+			_webGroup.remove($webs, true);
+			$webs.kill();
+		}
 		private function onSpidersInFire($spider:SpiderSprite, $fire:FlxSprite):void{
 			_spidersDeathCount[$spider] = 0;
 			
@@ -632,7 +668,6 @@ package com.spiders.states
 				_hero.gotHit(1);
 			}
 		}
-		
 		private function onItemPickup($hero:FlxSprite, $item:FlxSprite):void{
 			var message:Array = [];
 			
