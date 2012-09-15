@@ -42,14 +42,20 @@ package com.spiders.characters
 		public static const ANIM_IDLE_RIGHT:String = "idle_right";
 		public static const IDLE_RIGHT_FRAMES:Array = [7];
 		
+		public static const UP:String = "up";
+		public static const DOWN:String = "down";
+		public static const LEFT:String = "left";
+		public static const RIGHT:String = "right";
+		
 		//--------------------------------------
 		// VARIABLES
 		//--------------------------------------
 		public var animState:String = ANIM_IDLE_DOWN;
 		
 		public var autoIdle:Boolean = true;
+		public var autoVelocityAnimate:Boolean = true;
 		
-		private var _lastRunAnimation:String;
+		protected var _orientation:String = DOWN;
 		
 		
 		//--------------------------------------
@@ -70,6 +76,7 @@ package com.spiders.characters
 			this.addAnimation(ANIM_IDLE_RIGHT, IDLE_RIGHT_FRAMES, 5, true);
 			
 			this.animState = ANIM_IDLE_DOWN;
+			_orientation = DOWN;
 			this.play(ANIM_IDLE_DOWN);
 		}
 		
@@ -79,46 +86,59 @@ package com.spiders.characters
 		override public function update():void{
 			super.update();
 			
-			if(this.velocity.x > 0){
-				if(animState != ANIM_RUN_RIGHT){
-					_lastRunAnimation = animState = ANIM_RUN_RIGHT;
-					this.play(ANIM_RUN_RIGHT);
+			if(this.autoVelocityAnimate){
+				if(this.velocity.x > 0){
+					if(animState != ANIM_RUN_RIGHT){
+						_orientation = RIGHT
+						animState = ANIM_RUN_RIGHT;
+						this.play(ANIM_RUN_RIGHT);
+					}
+				}else if(this.velocity.x < 0){
+					if(animState != ANIM_RUN_LEFT){
+						_orientation = LEFT;
+						animState = ANIM_RUN_LEFT;
+						this.play(ANIM_RUN_LEFT);
+					}
+				}else if(this.velocity.y > 0){
+					if(animState != ANIM_RUN_DOWN){
+						_orientation = DOWN;
+						animState = ANIM_RUN_DOWN;
+						this.play(ANIM_RUN_DOWN);
+					}
+				}else if(this.velocity.y < 0){
+					if(animState != ANIM_RUN_UP){
+						_orientation = UP;
+						animState = ANIM_RUN_UP;
+						this.play(ANIM_RUN_UP);
+					}
 				}
-			}else if(this.velocity.x < 0){
-				if(animState != ANIM_RUN_LEFT){
-					_lastRunAnimation = animState = ANIM_RUN_LEFT;
-					this.play(ANIM_RUN_LEFT);
-				}
-			}else if(this.velocity.y > 0){
-				if(animState != ANIM_RUN_DOWN){
-					_lastRunAnimation = animState = ANIM_RUN_DOWN;
-					this.play(ANIM_RUN_DOWN);
-				}
-			}else if(this.velocity.y < 0){
-				if(animState != ANIM_RUN_UP){
-					_lastRunAnimation = animState = ANIM_RUN_UP;
-					this.play(ANIM_RUN_UP);
-				}
-			}else{
+			}
+			
+			if(velocity.x == 0 && velocity.y == 0){
 				if(autoIdle){
-					switch(_lastRunAnimation){
-						case ANIM_RUN_RIGHT:
+					switch(_orientation){
+						case RIGHT:
+							_orientation = RIGHT;
 							animState = ANIM_IDLE_RIGHT;
 							this.play(ANIM_IDLE_RIGHT);
 							break;
-						case ANIM_RUN_LEFT:
+						case LEFT:
+							_orientation = LEFT;
 							animState = ANIM_IDLE_LEFT;
 							this.play(ANIM_IDLE_LEFT);
 							break;
-						case ANIM_RUN_DOWN:
+						case DOWN:
+							_orientation = DOWN;
 							animState = ANIM_IDLE_DOWN;
 							this.play(ANIM_IDLE_DOWN);
 							break;
-						case ANIM_RUN_UP:
+						case UP:
+							_orientation = UP;
 							animState = ANIM_IDLE_UP;
 							this.play(ANIM_IDLE_UP);
 							break;
 						default:
+							_orientation = DOWN;
 							animState = ANIM_IDLE_DOWN;
 							this.play(ANIM_IDLE_DOWN);
 							break;

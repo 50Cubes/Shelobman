@@ -7,6 +7,7 @@ package com.spiders.hero
 	import flash.sampler.startSampling;
 	
 	import org.flixel.FlxG;
+	import org.flixel.FlxObject;
 	import org.flixel.FlxPath;
 	import org.flixel.FlxPoint;
 	import org.flixel.FlxSprite;
@@ -30,13 +31,22 @@ package com.spiders.hero
 		public static const JUMP_DURATION:Number = 500;
 		public static const JUMP_Y_PEAK:Number = 50;
 		
-		public static const JUMP_Y_VEL:Number = 50;
+		public static const JUMP_Y_VEL:Number = 70;
+		
+		public static const ANIM_JUMP_DOWN:String = "jump down";
+		public static const JUMP_DOWN_FRAMES:Array = [16];
+		public static const ANIM_JUMP_UP:String = "jump up";
+		public static const JUMP_UP_FRAMES:Array = [17];
+		public static const ANIM_JUMP_RIGHT:String = "jump right";
+		public static const JUMP_RIGHT_FRAMES:Array = [18];
+		public static const ANIM_JUMP_LEFT:String = "jump left";
+		public static const JUMP_LEFT_FRAMES:Array = [19];
 		
 		
 		//--------------------------------------
 		// VARIABLES
 		//--------------------------------------
-		[Embed(source = 'assets/SpriteHero_WalkingAll.png')]
+		[Embed(source = 'assets/SpriteHero_Final.png')]
 		private var _heroAsset:Class;
 		
 		public var canFire:Boolean = false;
@@ -71,6 +81,11 @@ package com.spiders.hero
 			this.height = 16;
 			
 			this.acceleration = new FlxPoint(0, 0);
+			
+			this.addAnimation(ANIM_JUMP_UP, JUMP_UP_FRAMES, 5, true);
+			this.addAnimation(ANIM_JUMP_DOWN, JUMP_DOWN_FRAMES, 5, true);
+			this.addAnimation(ANIM_JUMP_LEFT, JUMP_LEFT_FRAMES, 5, true);
+			this.addAnimation(ANIM_JUMP_RIGHT, JUMP_RIGHT_FRAMES, 5, true);
 		}
 		public function gotHit(dmg:int = 1):void
 		{
@@ -134,10 +149,36 @@ package com.spiders.hero
 			_jumpDestWorldPoint = $worldPoint;
 			
 			_jumpDiffPoint = new FlxPoint($worldPoint.x - this.x, $worldPoint.y - this.y);
+			
+			//Turn off animation automatically from velocity.
+			this.autoVelocityAnimate = false;
+			this.autoIdle = false;
+			switch(this._orientation){
+				case WalkingDirectionalCharacter.UP:
+					animState = ANIM_JUMP_UP;
+					this.play(ANIM_JUMP_UP, true);
+					break;
+				case WalkingDirectionalCharacter.DOWN:
+					animState = ANIM_JUMP_DOWN;
+					this.play(ANIM_JUMP_DOWN, true);
+					break;
+				case WalkingDirectionalCharacter.LEFT:
+					animState = ANIM_JUMP_LEFT;
+					this.play(ANIM_JUMP_LEFT, true);
+					break;
+				case WalkingDirectionalCharacter.RIGHT:
+					animState = ANIM_JUMP_RIGHT;
+					this.play(ANIM_JUMP_RIGHT, true);
+					break;
+			}
 		}
 		
 		override public function update():void{
 			super.update();
+			
+			trace("animState: " + animState);
+			trace("orientation: " + this._orientation);
+			
 			_frame++;
 			if(isAlive && HP < HP_MAX)
 			{
@@ -153,39 +194,20 @@ package com.spiders.hero
 				if(now - _jumpStartTime >= JUMP_DURATION){
 					//stop jumping
 					this.isJumping = false;
-					
-					//this.x = _jumpDestWorldPoint.x;
-					//this.y = _jumpDestWorldPoint.y;
 					this.velocity.x = 0;
 					this.velocity.y = 0;
+					autoVelocityAnimate = true;
+					autoIdle = true;
 				}else{
 					//Make a y offset for jumping
-					
-					
-					/*
-					var yJumpOffset:Number;
-					if(now - _jumpStartTime < JUMP_DURATION/2){
-						yJumpOffset = -JUMP_Y_PEAK * (now - _jumpStartTime)/JUMP_DURATION;
-					}else{
-						yJumpOffset = -JUMP_Y_PEAK * ((_jumpStartTime + JUMP_DURATION) - now)/JUMP_DURATION;
-					}
-					this.y = _jumpStartWorldPoint.y + (now - _jumpStartTime)/JUMP_DURATION * _jumpDiffPoint.y + yJumpOffset;
-					this.x = _jumpStartWorldPoint.x + (now - _jumpStartTime)/JUMP_DURATION * _jumpDiffPoint.x;
-					*/
 					var yVelOffset:Number;
 					if(now - _jumpStartTime < JUMP_DURATION/2){
-						//yJumpOffset = -JUMP_Y_PEAK * (now - _jumpStartTime)/JUMP_DURATION;
 						yVelOffset = -JUMP_Y_VEL;
 					}else{
-						//yJumpOffset = -JUMP_Y_PEAK * ((_jumpStartTime + JUMP_DURATION) - now)/JUMP_DURATION;
 						yVelOffset = JUMP_Y_VEL;
 					}
-					/*
-					this.y = _jumpStartWorldPoint.y + (now - _jumpStartTime)/JUMP_DURATION * _jumpDiffPoint.y + yJumpOffset;
-					this.x = _jumpStartWorldPoint.x + (now - _jumpStartTime)/JUMP_DURATION * _jumpDiffPoint.x;
-					*/
-					this.velocity.y = _jumpDiffPoint.y / JUMP_DURATION * 1000 + yVelOffset;
-					this.velocity.x = _jumpDiffPoint.x / JUMP_DURATION * 1000;
+					this.velocity.y = _jumpDiffPoint.y / JUMP_DURATION * 1100 + yVelOffset;
+					this.velocity.x = _jumpDiffPoint.x / JUMP_DURATION * 1100;
 				}
 			}
 		}
