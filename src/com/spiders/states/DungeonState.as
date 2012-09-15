@@ -76,6 +76,10 @@ package com.spiders.states
 		
 		private var _fires:FlxGroup;
 		
+		private var _fadeToWhite:Boolean = false;
+		private var _fadeToWhiteSprite:FlxSprite;
+		private var _whiteFadeCounter:int = 0;
+		
 		
 		[Embed(source = 'assets/bootsheet.png')]
 		private var _bootItem:Class;
@@ -92,6 +96,20 @@ package com.spiders.states
 		[Embed(source = 'assets/mbootsheet.png')]
 		private var _mbootItem:Class;
 		
+		private var lampXLocations:Array = [27, 42, 44];
+		private var lampYLocations:Array = [48, 50, 28];
+		
+		private var bootXLocations:Array = [9, 47, 37];
+		private var bootYLocations:Array = [33, 33, 44];
+		
+		private var firePotionXLocations:Array = [18, 39, 56];
+		private var firePotionYLocations:Array = [24, 61, 36];
+		
+		private var heartXLocations:Array = [36, 46, 39, 59, 54, 48, 22, 30];
+		private var heartYLocations:Array = [24, 28, 54, 19, 46, 40, 41, 30];
+		
+		private var spiderXStartLocations:Array = [36,58,61,39,39,38,18,46,61,54,25,26,26,33,32];
+		private var spiderYStartLocations:Array = [22,20,37,54,57,59,27,29,25,38,14,11,9,11,14];
 		
 		//--------------------------------------
 		// CONSTRUCTOR
@@ -146,10 +164,11 @@ package com.spiders.states
 			_spiders = new FlxGroup();
 			var spider:SpiderSprite;
 			var point:FlxPoint;
-
+			
+			/*
 			//Debug spiders
-			var spiderXValues:Array = [30 * TILE_WIDTH];
-			var spiderYValues:Array = [41 * TILE_HEIGHT + TILE_HEIGHT/2];
+			var spiderXValues:Array = []; //[30 * TILE_WIDTH];
+			var spiderYValues:Array = []; //[41 * TILE_HEIGHT + TILE_HEIGHT/2];
 			
 			for(var i:int=0 ; i<spiderXValues.length ; i++){
 				var spiderX:Number = spiderXValues[i];
@@ -159,7 +178,14 @@ package com.spiders.states
 				_spiders.add(spider);
 				add(spider);
 			}
-				
+			*/
+			
+			//Add spiders
+			for(var i:int=0 ; i<spiderXStartLocations.length ; i++){
+				spider = new SpiderSprite(spiderXStartLocations[i] * TILE_WIDTH, spiderYStartLocations[i] * TILE_HEIGHT);
+				_spiders.add(spider);
+				add(spider);
+			}
 				
 				/////
 			
@@ -171,6 +197,8 @@ package com.spiders.states
 			
 			_fires = new FlxGroup();
 			
+			
+			
 			_statusBar = new StatusBar();
 			add(_statusBar);
 
@@ -179,14 +207,49 @@ package com.spiders.states
 			
 			//Show a dialog box
 			_dialogBox = new FlxDialog();
-			_dialogBox.message = ["Where am I? Why is it so dark?\n\n(Press X or Space to continue)", "I need to find a light source!"];
+			_dialogBox.message = ["Where am I? Why is it so dark?", "I need to find a light source!"];
 			this.add(_dialogBox);
+			
+			this._fadeToWhiteSprite = new FlxSprite(0, 0)
+			_fadeToWhiteSprite.makeGraphic(800, 600, 0xFFFFFFFF); //0xFFFFFFFF);
+			_fadeToWhiteSprite.scrollFactor.x = 0;
+			_fadeToWhiteSprite.scrollFactor.y = 0;
+			_fadeToWhiteSprite.alpha = .01;
+			_fadeToWhiteSprite.visible = false;
+			add(_fadeToWhiteSprite);
 			
 		}
 		private function initItems():void
 		{
 			_items = new FlxGroup();
-
+			
+			var i:int;
+			
+			for(i=0 ; i<this.bootXLocations.length ; i++){
+				var shoe:ShoeItemSprite = new ShoeItemSprite(bootXLocations[i] * TILE_WIDTH, bootYLocations[i] * TILE_HEIGHT, _bootItem);
+				add(shoe);
+				_items.add(shoe);
+			}
+			
+			for(i=0 ; i<this.lampXLocations.length ; i++){
+				var candle:CandleItemSprite = new CandleItemSprite(lampXLocations[i] * TILE_WIDTH, lampYLocations[i] * TILE_HEIGHT, _candleItem);
+				add(candle);
+				_items.add(candle);
+			}
+			
+			for(i=0 ; i<firePotionXLocations.length ; i++){
+				var firePotion:FirePowerup = new FirePowerup(firePotionXLocations[i] * TILE_WIDTH, firePotionYLocations[i] * TILE_HEIGHT, _firebombItem);
+				add(firePotion);
+				_items.add(firePotion);
+			}
+			
+			for(i=0 ; i<heartXLocations.length ; i++){
+				var heart:HeartItemSprite = new HeartItemSprite(heartXLocations[i] * TILE_WIDTH, heartYLocations[i] * TILE_HEIGHT, _heartItem);
+				add(heart);
+				_items.add(heart);
+			}
+			
+			/*
 			var floatingItem:ShoeItemSprite = new ShoeItemSprite(31 * TILE_WIDTH, 34 * TILE_HEIGHT,_bootItem);
 			add(floatingItem);
 			_items.add(floatingItem);
@@ -202,9 +265,9 @@ package com.spiders.states
 			var firebombItem:FirePowerup = new FirePowerup(29 * TILE_WIDTH, 35 * TILE_HEIGHT,_firebombItem);
 			add(firebombItem);
 			_items.add(firebombItem);
-			
+			*/
 		}
-		private var firebombItem:PotionItemSprite;
+
 		override public function destroy():void{
 			super.destroy();
 			
@@ -214,6 +277,26 @@ package com.spiders.states
 		
 		override public function update():void{
 			super.update();
+			
+			if(_fadeToWhite){
+				if(_whiteFadeCounter == 0){
+					_fadeToWhiteSprite.visible = true;
+					_fadeToWhiteSprite.alpha = .01;
+					//Kill 'em all
+					for each(var spider:SpiderSprite in _spiders.members){
+						this.onSpidersInFire(spider, null);
+					}
+				}
+				_whiteFadeCounter++;
+				
+				_fadeToWhiteSprite.alpha = Math.min(1, _whiteFadeCounter/50.0);
+				
+				if(_fadeToWhiteSprite.alpha >= 1){
+					_fadeToWhite = false;
+					trace("congratulations!");
+				}
+			}
+			
 			_updateCounter++;
 			//FlxG.worldBounds = new FlxRect(_hero.x - 128, _hero.y - 128, Util.STAGE_WIDTH, Util.STAGE_HEIGHT);
 			//trace("worldBounds -- " + FlxG.worldBounds.x + " " + FlxG.worldBounds.y);
@@ -232,12 +315,12 @@ package com.spiders.states
 			else if(_bossSprite.isActive == true && _bossSprite.isAlive && _updateCounter % _bossSprite.spawnByFrames == 0)
 			{
 				var spawns:int = Util.randInclusive(1, 3);
-				var spider:SpiderSprite;
+				var spawnSpider:SpiderSprite;
 				for (var i:int = 0; i < spawns; i++)
 				{
-					spider = new SpiderSprite(_bossSprite.x + _bossSprite.width * 0.5, _bossSprite.y + _bossSprite.health * 0.5, null, 300, 500);
-					_spiders.add(spider);
-					add(spider);
+					spawnSpider = new SpiderSprite(_bossSprite.x + _bossSprite.width * 0.5, _bossSprite.y + _bossSprite.health * 0.5, null, 300, 500);
+					_spiders.add(spawnSpider);
+					add(spawnSpider);
 					
 				}
 			}
@@ -245,7 +328,7 @@ package com.spiders.states
 			
 			updateAndCleanupDeadSpiders();
 			
-			trace("hero position -- " + _hero.x + " " + _hero.y);
+			//trace("hero position -- " + _hero.x + " " + _hero.y);
 			//FlxG.collide(this._map, this._hero);
 			
 			FlxG.overlap(_spiders, _fires, onSpidersInFire);

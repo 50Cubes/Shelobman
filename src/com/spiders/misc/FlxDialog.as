@@ -61,6 +61,13 @@ package com.spiders.misc{
 		public function set message(Message:Array):void {
 			this.visible = true;
 			messages = Message.slice(); // copy the array!
+			
+			///
+			for(var i:int=0 ; i<messages.length ; i++){
+				messages[i] = (messages[i] as String) + "\n\n(Press X or Space to continue)"; 
+			}
+			///
+			
 			_done = true;
 			_scrolling_timer = 0;
 		}

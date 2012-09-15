@@ -177,8 +177,8 @@ package com.spiders.hero
 		override public function update():void{
 			super.update();
 			
-			trace("animState: " + animState);
-			trace("orientation: " + this.orientation);
+			//trace("animState: " + animState);
+			//trace("orientation: " + this.orientation);
 			
 			_frame++;
 			if(isAlive && HP < HP_MAX)
