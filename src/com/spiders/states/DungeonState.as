@@ -820,9 +820,11 @@ package com.spiders.states
 			
 			_items.remove($item, true);
 			
-			message = message.concat(getReadinessMessage());
+			if(message.length > 0){
+				message = message.concat(getReadinessMessage());
 			
-			this._dialogBox.message = message;
+				this._dialogBox.message = message;
+			}
 		}
 		
 		private function getReadinessMessage():Array{
