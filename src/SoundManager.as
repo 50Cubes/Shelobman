@@ -55,8 +55,13 @@ package
 		[Embed(source = 'assets/LOZ_Die.mp3')]
 		private static var _linkDieClip:Class;
 		
-		[Embed(source = 'assets/sounds/spider_tarantula_hiss.mp3')]
+		[Embed(source = 'assets/sounds/spider_tarantula_walk_on_leaves.mp3')]
 		private static var _spiderHiss:Class;
+		
+		
+		
+		private static var _effectHeroDyingEffect:FlxSound;
+		private static var _effectSpiderHissing:FlxSound;
 		
 		
 		//--------------------------------------
@@ -70,15 +75,23 @@ package
 		
 		public static function playHeroDying():void
 		{
-			var sound:FlxSound = new FlxSound();
-			sound.loadEmbedded(_linkDieClip, false, true);
-			sound.play();
+			if(_effectHeroDyingEffect == null)
+			{
+				_effectHeroDyingEffect = new FlxSound();
+				_effectHeroDyingEffect.loadEmbedded(_linkDieClip, false, true);
+			}
+			_effectHeroDyingEffect.play();
 		}
 		public static function playSpiderHissing():void
 		{
-			var sound:FlxSound = new FlxSound();
-			sound.loadEmbedded(_spiderHiss, false, true);
-			sound.play();
+			if(_effectSpiderHissing == null)
+			{
+				_effectSpiderHissing = new FlxSound();
+				_effectSpiderHissing.loadEmbedded(_spiderHiss, false, true);
+				_effectSpiderHissing.volume = 100;
+			}
+			_effectSpiderHissing.play();
+			
 		}
 
 		//--------------------------------------
