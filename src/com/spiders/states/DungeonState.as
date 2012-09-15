@@ -10,6 +10,7 @@ package com.spiders.states
 	import com.spiders.powerups.JumpPowerup;
 	
 	import flash.geom.Point;
+	import flash.utils.Dictionary;
 	
 	import org.flixel.*;
 	
@@ -57,6 +58,8 @@ package com.spiders.states
 		private var _items:FlxGroup;
 		private var _upateCounter:int = 0;
 		private var _updateFrequency:int = FlxG.framerate;
+		
+		private var _spidersDeathCount:Dictionary = new Dictionary();
 		
 		//private var _firePowerup:FirePowerup;
 		private var _fires:FlxGroup;
@@ -176,13 +179,14 @@ package com.spiders.states
 		override public function update():void{
 			super.update();
 			
+			updateAndCleanupDeadSpiders();
+			
 			trace("hero position -- " + _hero.x + " " + _hero.y);
-			FlxG.collide(this._map, this._hero);
+			//FlxG.collide(this._map, this._hero);
 			
 			FlxG.overlap(_spiders, _fires, onSpidersInFire);
 			
 			if(_hero.isAlive && !_hero.isJumping){
-				FlxG.collide(_map, _hero, onMapCollision);
 				FlxG.overlap(_hero, _fires, onHeroInFire);
 			}
 			
@@ -190,6 +194,7 @@ package com.spiders.states
 			
 			_upateCounter++;
 			if(_hero.isAlive){
+				FlxG.collide(_map, _hero, onMapCollision);
 				FlxG.overlap(_hero, _items, onItemPickup);
 				
 				if(_upateCounter % _updateFrequency == 0)
@@ -212,7 +217,17 @@ package com.spiders.states
 		
 		//--------------------------------------
 		// PROTECTED & PRIVATE METHODS
-		//--------------------------------------							
+		//--------------------------------------	
+		private function updateAndCleanupDeadSpiders():void{
+			for(var keySpider:* in this._spidersDeathCount){
+				_spidersDeathCount[keySpider]++;
+				var count:int = _spidersDeathCount[keySpider]
+				if(count >= 60){
+					keySpider.kill();
+				}
+			}
+		}
+		
 		private function handleKeyboardInput():void{
 			if(FlxG.keys.justPressed("F")){
 				if(_hero.canFire && _fires.length < MAX_FIRES){
@@ -417,7 +432,8 @@ package com.spiders.states
 			//Fuck it, just look at the tile i think they're going to
 			var destinyTile:FlxPoint = this.getTileCoordInFrontOfHero();
 			var destinyType:uint = _map.getTile(destinyTile.x, destinyTile.y);
-			if(destinyType == DungeonMap.PIT){
+
+			if(!_hero.isJumping && destinyType == DungeonMap.PIT || destinyType == DungeonMap.SPIKE_PIT){
 				//YOU LOSE! GOOD DAY, SIR!
 				//FALL INTO THE PIT YOU BASTARD!
 				_hero.x = destinyTile.x * TILE_WIDTH + (TILE_WIDTH - _hero.width)/2;
@@ -426,8 +442,17 @@ package com.spiders.states
 			}
 		}
 		
-		private function onSpidersInFire($spider:FlxSprite, $fire:FlxSprite):void{
-			$spider.kill();
+		private function onSpidersInFire($spider:SpiderSprite, $fire:FlxSprite):void{
+			_spidersDeathCount[$spider] = 0;
+			
+			$spider.stopFollowingPath(true);
+			$spider.velocity.x = 0;
+			$spider.velocity.y = 0;
+			$spider.autoIdle = false;
+			
+			$spider.play(SpiderSprite.ANIM_FIRE_DEATH, true);
+			//$spider.kill();
+			
 			_spiders.remove($spider, true);
 		}
 		

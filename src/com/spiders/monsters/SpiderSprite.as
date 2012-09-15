@@ -51,6 +51,9 @@ package com.spiders.monsters
 		public static const ANIM_IDLE:String = "idle";
 		public static const IDLE_FRAMES:Array = [0,1,2,3,4,5,6,7];
 		
+		public static const ANIM_FIRE_DEATH:String = "fire death";
+		public static const FIRE_DEATH_FRAMES:Array = [19, 20, 21, 22, 23, 24, 25];
+		
 		private static const CHECK_DELAY_MAX:Number = FlxG.framerate;
 		
 		//--------------------------------------
@@ -78,6 +81,8 @@ package com.spiders.monsters
 			this.offset.y = 38;
 			this.width = 32;
 			this.height = 16;
+			
+			this.addAnimation(ANIM_FIRE_DEATH, FIRE_DEATH_FRAMES, 5, false);
 			
 			//this.acceleration = new FlxPoint(0, 0);
 			spawningPosition = new FlxPoint(X+width*0.5,Y+height*0.5);// Util.tileToCoord(Util.coordToTile(new FlxPoint(x, y)));

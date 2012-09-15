@@ -30,6 +30,8 @@ package com.spiders.hero
 		public static const JUMP_DURATION:Number = 500;
 		public static const JUMP_Y_PEAK:Number = 50;
 		
+		public static const JUMP_Y_VEL:Number = 50;
+		
 		
 		//--------------------------------------
 		// VARIABLES
@@ -152,10 +154,15 @@ package com.spiders.hero
 					//stop jumping
 					this.isJumping = false;
 					
-					this.x = _jumpDestWorldPoint.x;
-					this.y = _jumpDestWorldPoint.y;
+					//this.x = _jumpDestWorldPoint.x;
+					//this.y = _jumpDestWorldPoint.y;
+					this.velocity.x = 0;
+					this.velocity.y = 0;
 				}else{
 					//Make a y offset for jumping
+					
+					
+					/*
 					var yJumpOffset:Number;
 					if(now - _jumpStartTime < JUMP_DURATION/2){
 						yJumpOffset = -JUMP_Y_PEAK * (now - _jumpStartTime)/JUMP_DURATION;
@@ -164,6 +171,21 @@ package com.spiders.hero
 					}
 					this.y = _jumpStartWorldPoint.y + (now - _jumpStartTime)/JUMP_DURATION * _jumpDiffPoint.y + yJumpOffset;
 					this.x = _jumpStartWorldPoint.x + (now - _jumpStartTime)/JUMP_DURATION * _jumpDiffPoint.x;
+					*/
+					var yVelOffset:Number;
+					if(now - _jumpStartTime < JUMP_DURATION/2){
+						//yJumpOffset = -JUMP_Y_PEAK * (now - _jumpStartTime)/JUMP_DURATION;
+						yVelOffset = -JUMP_Y_VEL;
+					}else{
+						//yJumpOffset = -JUMP_Y_PEAK * ((_jumpStartTime + JUMP_DURATION) - now)/JUMP_DURATION;
+						yVelOffset = JUMP_Y_VEL;
+					}
+					/*
+					this.y = _jumpStartWorldPoint.y + (now - _jumpStartTime)/JUMP_DURATION * _jumpDiffPoint.y + yJumpOffset;
+					this.x = _jumpStartWorldPoint.x + (now - _jumpStartTime)/JUMP_DURATION * _jumpDiffPoint.x;
+					*/
+					this.velocity.y = _jumpDiffPoint.y / JUMP_DURATION + yVelOffset;
+					this.velocity.x = _jumpDiffPoint.x / JUMP_DURATION * 1000;
 				}
 			}
 		}

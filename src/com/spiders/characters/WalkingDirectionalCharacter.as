@@ -47,7 +47,10 @@ package com.spiders.characters
 		//--------------------------------------
 		public var animState:String = ANIM_IDLE_DOWN;
 		
+		public var autoIdle:Boolean = true;
+		
 		private var _lastRunAnimation:String;
+		
 		
 		//--------------------------------------
 		// CONSTRUCTOR
@@ -97,27 +100,29 @@ package com.spiders.characters
 					this.play(ANIM_RUN_UP);
 				}
 			}else{
-				switch(_lastRunAnimation){
-					case ANIM_RUN_RIGHT:
-						animState = ANIM_IDLE_RIGHT;
-						this.play(ANIM_IDLE_RIGHT);
-						break;
-					case ANIM_RUN_LEFT:
-						animState = ANIM_IDLE_LEFT;
-						this.play(ANIM_IDLE_LEFT);
-						break;
-					case ANIM_RUN_DOWN:
-						animState = ANIM_IDLE_DOWN;
-						this.play(ANIM_IDLE_DOWN);
-						break;
-					case ANIM_RUN_UP:
-						animState = ANIM_IDLE_UP;
-						this.play(ANIM_IDLE_UP);
-						break;
-					default:
-						animState = ANIM_IDLE_DOWN;
-						this.play(ANIM_IDLE_DOWN);
-						break;
+				if(autoIdle){
+					switch(_lastRunAnimation){
+						case ANIM_RUN_RIGHT:
+							animState = ANIM_IDLE_RIGHT;
+							this.play(ANIM_IDLE_RIGHT);
+							break;
+						case ANIM_RUN_LEFT:
+							animState = ANIM_IDLE_LEFT;
+							this.play(ANIM_IDLE_LEFT);
+							break;
+						case ANIM_RUN_DOWN:
+							animState = ANIM_IDLE_DOWN;
+							this.play(ANIM_IDLE_DOWN);
+							break;
+						case ANIM_RUN_UP:
+							animState = ANIM_IDLE_UP;
+							this.play(ANIM_IDLE_UP);
+							break;
+						default:
+							animState = ANIM_IDLE_DOWN;
+							this.play(ANIM_IDLE_DOWN);
+							break;
+					}
 				}
 			}
 		}

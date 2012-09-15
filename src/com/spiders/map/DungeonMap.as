@@ -19,7 +19,9 @@ package com.spiders.map
 		//--------------------------------------
 		public static const FLOOR:uint = 0;
 		public static const WALL:uint = 1;
-		public static const PIT:uint = 2;
+		public static const SPIKE_PIT:uint = 2;
+		public static const PIT:uint = 3;
+		
 		
 		//--------------------------------------
 		// VARIABLES
