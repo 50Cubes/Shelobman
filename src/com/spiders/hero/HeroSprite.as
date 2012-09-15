@@ -76,7 +76,7 @@ package com.spiders.hero
 			
 			this.loadGraphic(_heroAsset, true);
 			
-			this.offset.x = 16;
+			this.offset.x = 18;
 			this.offset.y = 42;
 			this.width = 32;
 			this.height = 16;
@@ -211,6 +211,11 @@ package com.spiders.hero
 					this.velocity.x = _jumpDiffPoint.x / JUMP_DURATION * 1100;
 				}
 			}
+		}
+		
+		override public function draw():void{
+			super.draw();
+			//this.drawDebug();
 		}
 		
 		

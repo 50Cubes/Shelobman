@@ -54,13 +54,14 @@ package com.spiders.states
 		private var _dataMap:Class;
 		
 		private var _map:DungeonMap;
+		private var _spiderPathMap:DungeonMap;
 		private var _cameraGroup:FlxGroup;
 		private var _statusBar:StatusBar;
 		
 		private var _hero:HeroSprite;
 		private var _spiders:FlxGroup;
 		private var _items:FlxGroup;
-		private var _upateCounter:int = 0;
+		private var _updateCounter:int = 0;
 		private var _updateFrequency:int = FlxG.framerate;
 		private var _bossSprite:BossSprite;
 		
@@ -73,7 +74,6 @@ package com.spiders.states
 		private var _dialogBox:FlxDialog;
 		private var _firstSpiderEncountered:Boolean = false;
 		
-		//private var _firePowerup:FirePowerup;
 		private var _fires:FlxGroup;
 		
 		
@@ -92,8 +92,6 @@ package com.spiders.states
 		[Embed(source = 'assets/mbootsheet.png')]
 		private var _mbootItem:Class;
 		
-//		[Embed(source = 'assets/torchsheet.png')]
-//		private var _torchItem:Class;
 		
 		//--------------------------------------
 		// CONSTRUCTOR
@@ -111,8 +109,7 @@ package com.spiders.states
 			
 			_map = new DungeonMap();
 			_map.loadMap(new _dataMap, _imgTiles, TILE_WIDTH, TILE_HEIGHT, FlxTilemap.OFF, 0, 0, 1);
-			_map.setTileProperties(DungeonMap.PIT, FlxObject.NONE);
-			_map.setTileProperties(DungeonMap.SPIKE_PIT, FlxObject.NONE);
+			turnOffPitCollision();
 			
 			add(_map);
 			
@@ -150,25 +147,23 @@ package com.spiders.states
 			var spider:SpiderSprite;
 			var point:FlxPoint;
 
+			//Debug spiders
+			var spiderXValues:Array = [30 * TILE_WIDTH];
+			var spiderYValues:Array = [41 * TILE_HEIGHT + TILE_HEIGHT/2];
 			
-			for(var i:int = 0; i < 2; i++)
-			{
-				//var openTiles:Array = _map.getTileCoords(1);
-				var tileIndex:int = Util.randInclusive(0, openTiles.length-1);
-			//	var tileIndex:int = Util.randInclusive(0, openTiles.length-1);
-			//	point = openTiles[tileIndex] as FlxPoint;
-				point = openTiles[3+i] as FlxPoint;
-				trace("point ");
-				trace(point.x + " " + point.y);
+			for(var i:int=0 ; i<spiderXValues.length ; i++){
+				var spiderX:Number = spiderXValues[i];
+				var spiderY:Number = spiderYValues[i];
 				
-				spider = new SpiderSprite(point.x, point.y);
+				spider = new SpiderSprite(spiderX, spiderY);
 				_spiders.add(spider);
 				add(spider);
-				
-				//spider = new SpiderSprite(Util.randInclusive(100,Util.STAGE_WIDTH-100), Util.randInclusive(100,Util.STAGE_HEIGHT-100));
 			}
+				
+				
+				/////
 			
-			_darkFilter = new DarkFilter(-TILE_WIDTH/4, 0);
+			_darkFilter = new DarkFilter(-TILE_WIDTH/4 - 5, 0);
 			_darkFilter.scale = new FlxPoint(1.2, 1.2);
 			add(_darkFilter);
 			
@@ -184,7 +179,7 @@ package com.spiders.states
 			
 			//Show a dialog box
 			_dialogBox = new FlxDialog();
-			_dialogBox.message = ["Where am I? Why is it so dark?", "I need to find a light source!"];
+			_dialogBox.message = ["Where am I? Why is it so dark?\n\n(Press X or Space to continue)", "I need to find a light source!"];
 			this.add(_dialogBox);
 			
 		}
@@ -219,7 +214,7 @@ package com.spiders.states
 		
 		override public function update():void{
 			super.update();
-			_upateCounter++;
+			_updateCounter++;
 			//FlxG.worldBounds = new FlxRect(_hero.x - 128, _hero.y - 128, Util.STAGE_WIDTH, Util.STAGE_HEIGHT);
 			//trace("worldBounds -- " + FlxG.worldBounds.x + " " + FlxG.worldBounds.y);
 			
@@ -234,7 +229,7 @@ package com.spiders.states
 					_bossSprite.isActive = true;
 				}
 			}
-			else if(_bossSprite.isActive == true && _bossSprite.isAlive && _upateCounter % _bossSprite.spawnByFrames == 0)
+			else if(_bossSprite.isActive == true && _bossSprite.isAlive && _updateCounter % _bossSprite.spawnByFrames == 0)
 			{
 				var spawns:int = Util.randInclusive(1, 3);
 				var spider:SpiderSprite;
@@ -268,8 +263,23 @@ package com.spiders.states
 				FlxG.collide(_map, _hero);
 				FlxG.overlap(_hero, _items, onItemPickup);
 				
-				if(_upateCounter % _updateFrequency == 0)
-					moveTowardsHero();
+				//spiders need to stop immediately, also collide and bite >:)
+				for each (var updateSpider:SpiderSprite in _spiders.members)
+				{
+					//No need to collide the map with the spider,
+					// they should only move on mapped paths.
+					//FlxG.collide(updateSpider, _map);
+					FlxG.overlap(updateSpider, _hero, spiderBiteHero);
+					
+					if(updateSpider.pathSpeed == 0){
+						updateSpider.stopFollowingPath(true);
+						updateSpider.velocity.x = updateSpider.velocity.y = 0;
+					}
+				}
+				
+				if(_updateCounter % _updateFrequency == 0){
+					handleSpiderAggroAndPathing();
+				}
 			
 				handleKeyboardInput();
 			}
@@ -289,6 +299,16 @@ package com.spiders.states
 		//--------------------------------------
 		// PROTECTED & PRIVATE METHODS
 		//--------------------------------------	
+		private function turnOffPitCollision():void{
+			_map.setTileProperties(DungeonMap.PIT, FlxObject.NONE);
+			_map.setTileProperties(DungeonMap.SPIKE_PIT, FlxObject.NONE);
+		}
+		
+		private function turnOnPitCollision():void{
+			_map.setTileProperties(DungeonMap.PIT, FlxObject.ANY);
+			_map.setTileProperties(DungeonMap.SPIKE_PIT, FlxObject.ANY);
+		}
+		
 		private function updateAndCleanupDeadSpiders():void{
 			for(var keySpider:* in this._spidersDeathCount){
 				_spidersDeathCount[keySpider]++;
@@ -303,11 +323,9 @@ package com.spiders.states
 			if(FlxG.keys.justPressed("F")){
 				if(_hero.canFire && _fires.length < MAX_FIRES){
 					//Kill them with fire
-					//var fireTilePoint:FlxPoint = getTileCoordInFrontOfHero();
-					//var fireWorldPoint:FlxPoint = getWorldCoordInFrontOfHero();
 					var fireWorldPoint:FlxPoint = getWorldCoordTilesInFrontOfHero(1);
 					
-					var newFire:Fire = new Fire(fireWorldPoint.x, fireWorldPoint.y - 40, onFireSnuff);
+					var newFire:Fire = new Fire(fireWorldPoint.x - 13, fireWorldPoint.y - 40, onFireSnuff);
 					this._fires.add(newFire);
 					add(newFire);
 				}
@@ -356,100 +374,80 @@ package com.spiders.states
 				_hero.drag.x = _hero.drag.y = 0;
 			}
 		}
+		
+		private function spiderGoHome(spider:SpiderSprite):void{
+			spider.isAggro = false;
+			this.turnOnPitCollision();
+			var path:FlxPath = _map.findPath(new FlxPoint(spider.x + spider.width/2, spider.y + spider.height/2), spider.spawningPosition);
+			if(path){
+				spider.followPath(path);
+			}
+			this.turnOffPitCollision();
+		}
+		
 		private function spiderBiteHero($spider:SpiderSprite, $hero:HeroSprite):void
 		{
 			if($hero.isAlive){
 				$hero.gotHit(1);
 			}
+			
+			if($hero.isAlive){
+				$spider.stopFollowingPath(true);
+				$spider.velocity.x = $spider.velocity.y = 0;
+			}else{
+				spiderGoHome($spider);
+			}
 		}
-		private function moveTowardsHero():void
+		private function handleSpiderAggroAndPathing():void
 		{
+			if(!_hero.isAlive){
+				return;
+			}
+			
 			var target:FlxSprite = _hero;
 			for each (var spider:SpiderSprite in _spiders.members)
 			{	
 				//Find path to goal
-				//if (spider.animState == SpiderSprite.ANIM_IDLE)
-				FlxG.collide(spider, _spiders);
-				FlxG.collide(spider, _map);
-				FlxG.overlap(spider, _hero, spiderBiteHero);
 				var path:FlxPath;
+				var a:Number = Math.abs(spider.spawningPosition.x - spider.x);
+				var b:Number = Math.abs(spider.spawningPosition.y - spider.y);
+				var spiderDistanceFromSpawn:Number = Math.sqrt(a*a + b*b) ;
 				
-				var a:Number = spider.spawningPosition.x - _hero.x;
-				var b:Number = spider.spawningPosition.y - _hero.y;
-				var pythagorean:Number = Math.sqrt(a*a + b*b) ;
+				var spiderA:Number = Math.abs(spider.x - _hero.x);
+				var spiderB:Number = Math.abs(spider.y - _hero.y);
+				var spiderDistanceFromHero:Number = Math.sqrt(spiderA*spiderA + spiderB*spiderB) ;
 				
+				var isWithinAggroHero:Boolean = spiderDistanceFromHero < spider.aggroDistance ? true : false;
+				var isOutOfRange:Boolean = spiderDistanceFromSpawn > spider.giveupDistance;
 				
-				var spiderA:Number = spider.x - _hero.x;
-				var spiderB:Number = spider.y - _hero.y;
-				var spiderPythagorean:Number = Math.sqrt(spiderA*spiderA + spiderB*spiderB) ;
-				
-				var isWithinAggroHero:Boolean = pythagorean < spider.aggroDistance ? true : false;
-				var isOutOfRange:Boolean = spiderPythagorean > pythagorean;
-				// aggro
-				var isWithinGiveupHero:Boolean = pythagorean < spider.giveupDistance ? true : false;
-				
-
-				try{
-					if(isWithinAggroHero == true && _hero.isAlive)
-					{
-						//Update the dialogue.
-						if(_firstSpiderEncountered == false){
-							var spiderMessage:Array = ["What's that sound? That... skittering..."];
-							if(_hero.canFire){
-								spiderMessage.push("Kill it with fire!");
-							}else{
-								spiderMessage.push("I have nothing to fight it with yet!");
-							}
-							_firstSpiderEncountered = true;
-						}
-						
-						trace("if isWithinAggroHero");
-						path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
-						
-						//Tell unit to follow path
-						if(path)
-						{
+				//////
+				if(spider.isAggro || isWithinAggroHero){
+					if(isOutOfRange){
+						//Give up and go back home to your spawn.
+						//(But I'm le tired.)
+						spiderGoHome(spider);
+					}else{
+						//Update path to the hero, aggro on the hero
+						//Gotta make sure they don't path over the damn pits...
+						this.turnOnPitCollision();
+						path = _map.findPath(new FlxPoint(spider.x + spider.width/2, spider.y + spider.height/2),
+							new FlxPoint(target.x + target.width/2, target.y + target.height/2));
+						this.turnOffPitCollision();
+						if(path){
+							spider.stopFollowingPath(true);
 							spider.followPath(path);
 							spider.isAggro = true;
 						}
 					}
-					else
-					{
-						trace("else ");
-						if(isWithinGiveupHero == true && _hero.isAlive && spider.isAggro == true)
-						{
-							trace("else if -- isWithinGiveupHero");
-							path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
-							
-							//Tell unit to follow path
-							if(path)
-							{
-								spider.followPath(path);
-							}
-						}
-						else
-						{
-							
-							path = _map.findPath(new FlxPoint(spider.x, spider.y), spider.spawningPosition);
-							spider.isAggro = false;
-							//Tell unit to follow path
-							
-							if(path)
-							{
-								spider.followPath(path);
-								
-							}
-							if(spider.pathSpeed == 0)
-							{
-								trace("else else");
-								spider.velocity = new FlxPoint(0, 0);
-							}
-						}
+				}else{
+					if(spider.path != null && spider.path.nodes != null && spider.path.nodes.length > 0){
+						//You have a path home already, no need to update it.
+						return;
+					}else{
+						//Find a path home, follow it.
+						spiderGoHome(spider);
 					}
-				}catch(error:Error){
-					//Couldn't move spider :(
 				}
-				
 			}
 		}
 		
@@ -580,21 +578,7 @@ package com.spiders.states
 				_statusBar.showPotion(true);
 				message.push("I have a weapon! (Press F to throw fire)");
 			}
-			/*
-			else if ($item is PotionItemSprite)
-			{
-				_statusBar.showPotion(true);
-				firebombItem.kill();
-				_hero.canFire = true;
-				message.push("I have a weapon! (Press F to throw fire)");
-			}
-			*/
-			/*
-			if($item is JumpPowerup){
-				_hero.canJump = true;
-			}
 			
-			*/
 			_items.remove($item, true);
 			
 			message = message.concat(getReadinessMessage());

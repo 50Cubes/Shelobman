@@ -70,28 +70,23 @@ package com.spiders.monsters
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------
-		public function SpiderSprite(X:Number=0, Y:Number=0, SimpleGraphic:Class=null, aggroD:Number = 100, giveupD:Number = 300)
+		public function SpiderSprite(X:Number=0, Y:Number=0, SimpleGraphic:Class=null, aggroD:Number = 200, giveupD:Number = 600)
 		{
 			super(X, Y);
-			//trace("spawningPosition before ");
-			//trace(spawningPosition.x + " " + spawningPosition.y);
 
 			this.loadGraphic(_heroAsset, true);
-			this.offset.x = 30;
-			this.offset.y = 38;
+			this.offset.x = 16;
+			this.offset.y = 22;
 			this.width = 32;
 			this.height = 16;
 			aggroDistance = aggroD;
 			giveupDistance = giveupD;
 			
+			//this.makeGraphic(this.width, this.height);
+			
 			this.addAnimation(ANIM_FIRE_DEATH, FIRE_DEATH_FRAMES, 5, false);
 			
-			//this.acceleration = new FlxPoint(0, 0);
-			spawningPosition = new FlxPoint(X+width*0.5,Y+height*0.5);// Util.tileToCoord(Util.coordToTile(new FlxPoint(x, y)));
-			//trace("spawningPosition ");
-			//trace(spawningPosition.x + " " + spawningPosition.y);
-//			spawningPosition.x += width;
-//			spawningPosition.y += height;
+			spawningPosition = new FlxPoint(this.x + this.width/2, this.y + this.height/2);// Util.tileToCoord(Util.coordToTile(new FlxPoint(x, y)));
 		}
 		public function doneDelay():Boolean
 		{
@@ -109,6 +104,16 @@ package com.spiders.monsters
 			return doneChecking; 
 			
 		}
+		
+		override public function draw():void{
+			super.draw();
+			//if(this.path){
+			//	this.path.drawDebug();
+			//}
+			
+			//this.drawDebug();
+		}
+		
 		//--------------------------------------
 		// PRIVATE VARIABLES
 		//--------------------------------------
@@ -117,10 +122,6 @@ package com.spiders.monsters
 		//--------------------------------------
 		// GETTER/SETTERS
 		//--------------------------------------
-//		public function getSpawningPosition():Point
-//		{
-//			return _spawningPosition;
-//		}
 		
 		//--------------------------------------
 		// PUBLIC METHODS
