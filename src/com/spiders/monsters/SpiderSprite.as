@@ -70,7 +70,7 @@ package com.spiders.monsters
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------
-		public function SpiderSprite(X:Number=0, Y:Number=0, SimpleGraphic:Class=null)
+		public function SpiderSprite(X:Number=0, Y:Number=0, SimpleGraphic:Class=null, aggroD:Number = 100, giveupD:Number = 300)
 		{
 			super(X, Y);
 			//trace("spawningPosition before ");
@@ -81,6 +81,8 @@ package com.spiders.monsters
 			this.offset.y = 38;
 			this.width = 32;
 			this.height = 16;
+			aggroDistance = aggroD;
+			giveupDistance = giveupD;
 			
 			this.addAnimation(ANIM_FIRE_DEATH, FIRE_DEATH_FRAMES, 5, false);
 			

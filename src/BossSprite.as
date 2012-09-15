@@ -54,7 +54,7 @@ package
 		public var HP_MAX:Number = 5;
 		public var isInvulerableState:Boolean = false;
 		public var isAlive:Boolean = true;
-		
+		public var spawnByFrames:int = 100;
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------

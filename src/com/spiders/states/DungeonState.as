@@ -132,7 +132,7 @@ package com.spiders.states
 			initItems();
 			var openTiles:Array = _map.getTileCoords(0);
 
-			_bossSprite = new BossSprite(50.50);
+			_bossSprite = new BossSprite(100, 100);
 			add(_bossSprite);
 			
 			_spiders = new FlxGroup();
@@ -208,8 +208,23 @@ package com.spiders.states
 		
 		override public function update():void{
 			super.update();
+			_upateCounter++;
 			//FlxG.worldBounds = new FlxRect(_hero.x - 128, _hero.y - 128, Util.STAGE_WIDTH, Util.STAGE_HEIGHT);
 			//trace("worldBounds -- " + FlxG.worldBounds.x + " " + FlxG.worldBounds.y);
+			
+			
+			if(_bossSprite.isAlive && _upateCounter % _bossSprite.spawnByFrames == 0)
+			{
+				var spawns:int = Util.randInclusive(1, 3);
+				var spider:SpiderSprite;
+				for (var i:int = 0; i < spawns; i++)
+				{
+					spider = new SpiderSprite(_bossSprite.x + _bossSprite.width * 0.5, _bossSprite.y + _bossSprite.health * 0.5, null, 300, 500);
+					_spiders.add(spider);
+					add(spider);
+					
+				}
+			}
 			
 			updateAndCleanupDeadSpiders();
 			
@@ -226,7 +241,7 @@ package com.spiders.states
 			
 			_statusBar.updateHealth(_hero.HP);
 			
-			_upateCounter++;
+			
 			if(_hero.isAlive){
 				FlxG.collide(_map, _hero, onMapCollision);
 				FlxG.overlap(_hero, _items, onItemPickup);
