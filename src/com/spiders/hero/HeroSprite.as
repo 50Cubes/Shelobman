@@ -153,7 +153,7 @@ package com.spiders.hero
 			//Turn off animation automatically from velocity.
 			this.autoVelocityAnimate = false;
 			this.autoIdle = false;
-			switch(this._orientation){
+			switch(this.orientation){
 				case WalkingDirectionalCharacter.UP:
 					animState = ANIM_JUMP_UP;
 					this.play(ANIM_JUMP_UP, true);
@@ -177,7 +177,7 @@ package com.spiders.hero
 			super.update();
 			
 			trace("animState: " + animState);
-			trace("orientation: " + this._orientation);
+			trace("orientation: " + this.orientation);
 			
 			_frame++;
 			if(isAlive && HP < HP_MAX)

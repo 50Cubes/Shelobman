@@ -55,7 +55,7 @@ package com.spiders.characters
 		public var autoIdle:Boolean = true;
 		public var autoVelocityAnimate:Boolean = true;
 		
-		protected var _orientation:String = DOWN;
+		public var orientation:String = DOWN;
 		
 		
 		//--------------------------------------
@@ -76,7 +76,7 @@ package com.spiders.characters
 			this.addAnimation(ANIM_IDLE_RIGHT, IDLE_RIGHT_FRAMES, 5, true);
 			
 			this.animState = ANIM_IDLE_DOWN;
-			_orientation = DOWN;
+			orientation = DOWN;
 			this.play(ANIM_IDLE_DOWN);
 		}
 		
@@ -89,25 +89,25 @@ package com.spiders.characters
 			if(this.autoVelocityAnimate){
 				if(this.velocity.x > 0){
 					if(animState != ANIM_RUN_RIGHT){
-						_orientation = RIGHT
+						orientation = RIGHT
 						animState = ANIM_RUN_RIGHT;
 						this.play(ANIM_RUN_RIGHT);
 					}
 				}else if(this.velocity.x < 0){
 					if(animState != ANIM_RUN_LEFT){
-						_orientation = LEFT;
+						orientation = LEFT;
 						animState = ANIM_RUN_LEFT;
 						this.play(ANIM_RUN_LEFT);
 					}
 				}else if(this.velocity.y > 0){
 					if(animState != ANIM_RUN_DOWN){
-						_orientation = DOWN;
+						orientation = DOWN;
 						animState = ANIM_RUN_DOWN;
 						this.play(ANIM_RUN_DOWN);
 					}
 				}else if(this.velocity.y < 0){
 					if(animState != ANIM_RUN_UP){
-						_orientation = UP;
+						orientation = UP;
 						animState = ANIM_RUN_UP;
 						this.play(ANIM_RUN_UP);
 					}
@@ -116,29 +116,29 @@ package com.spiders.characters
 			
 			if(velocity.x == 0 && velocity.y == 0){
 				if(autoIdle){
-					switch(_orientation){
+					switch(orientation){
 						case RIGHT:
-							_orientation = RIGHT;
+							orientation = RIGHT;
 							animState = ANIM_IDLE_RIGHT;
 							this.play(ANIM_IDLE_RIGHT);
 							break;
 						case LEFT:
-							_orientation = LEFT;
+							orientation = LEFT;
 							animState = ANIM_IDLE_LEFT;
 							this.play(ANIM_IDLE_LEFT);
 							break;
 						case DOWN:
-							_orientation = DOWN;
+							orientation = DOWN;
 							animState = ANIM_IDLE_DOWN;
 							this.play(ANIM_IDLE_DOWN);
 							break;
 						case UP:
-							_orientation = UP;
+							orientation = UP;
 							animState = ANIM_IDLE_UP;
 							this.play(ANIM_IDLE_UP);
 							break;
 						default:
-							_orientation = DOWN;
+							orientation = DOWN;
 							animState = ANIM_IDLE_DOWN;
 							this.play(ANIM_IDLE_DOWN);
 							break;
