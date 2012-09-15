@@ -86,6 +86,9 @@ package com.spiders.states
 		private var _fadeToWhiteSprite:FlxSprite;
 		private var _whiteFadeCounter:int = 0;
 		
+		private var _afterBossCounter:int = 0;
+		
+		
 		
 		[Embed(source = 'assets/bootsheet.png')]
 		private var _bootItem:Class;
@@ -235,10 +238,10 @@ package com.spiders.states
 			
 			//Show a dialog box
 			_dialogBox = new FlxDialog();
-			_dialogBox.message = ["Where am I? Why is it so dark?", "I need to find a light source!"];
+			_dialogBox.message = ["Where am I? Why is it so dark? (Press W, A, S, D to move)", "I need to find a light source!"];
 			this.add(_dialogBox);
 			
-			this._fadeToWhiteSprite = new FlxSprite(0, 0)
+			this._fadeToWhiteSprite = new FlxSprite(0, 0);
 			_fadeToWhiteSprite.makeGraphic(800, 600, 0xFFFFFFFF); //0xFFFFFFFF);
 			_fadeToWhiteSprite.scrollFactor.x = 0;
 			_fadeToWhiteSprite.scrollFactor.y = 0;
@@ -255,7 +258,7 @@ package com.spiders.states
 		private function hack():void
 		{
 			//Boss battle start point
-			HERO_START_POINT = new FlxPoint(11 * TILE_WIDTH, 9 * TILE_HEIGHT);
+			HERO_START_POINT = new FlxPoint(11 * TILE_WIDTH, 11 * TILE_HEIGHT);
 			_hero.x = HERO_START_POINT.x;
 			_hero.y = HERO_START_POINT.y;
 			_hero.canFire = true;
@@ -275,6 +278,8 @@ package com.spiders.states
 			_darkFilter.scale = new FlxPoint(4.5, 4.5);
 			_darkFilter.alpha = .75;
 			_hero.canSee = true;
+			
+			//_fadeToWhite = true;
 		}
 		private function initItems():void
 		{
@@ -327,9 +332,13 @@ package com.spiders.states
 
 		override public function destroy():void{
 			super.destroy();
-			
-			_map.destroy();
-			_hero.destroy();
+			/*
+			if(_map != null){
+				_map.destroy();
+			}if(_hero != null){
+				_hero.destroy();
+			}
+			*/
 		}
 		
 		override public function update():void{
@@ -339,10 +348,6 @@ package com.spiders.states
 				if(_whiteFadeCounter == 0){
 					_fadeToWhiteSprite.visible = true;
 					_fadeToWhiteSprite.alpha = .01;
-					//Kill 'em all
-					for each(var spider:SpiderSprite in _spiders.members){
-						this.onSpidersInFire(spider, null);
-					}
 				}
 				_whiteFadeCounter++;
 				
@@ -351,6 +356,7 @@ package com.spiders.states
 				if(_fadeToWhiteSprite.alpha >= 1){
 					_fadeToWhite = false;
 					trace("congratulations!");
+					FlxG.switchState(new CreditsState());
 				}
 			}
 			
@@ -421,8 +427,18 @@ package com.spiders.states
 				
 			}
 			
-			if(!_bossSprite.isAlive){
-				this._fadeToWhite = true;
+			if(!_bossSprite.isAlive && !_fadeToWhite){
+				//Kill 'em all
+				for each(var spider:SpiderSprite in _spiders.members){
+					if(spider.alive){
+						this.onSpidersInFire(spider, null);
+					}
+				}
+				
+				_afterBossCounter++;
+				if(_afterBossCounter >= 100){
+					this._fadeToWhite = true;
+				}
 			}
 			
 			
@@ -734,6 +750,8 @@ package com.spiders.states
 		}
 		private function onSpidersInFire($spider:SpiderSprite, $fire:FlxSprite):void{
 			_spidersDeathCount[$spider] = 0;
+			
+			$spider.alive = false;
 			
 			$spider.stopFollowingPath(true);
 			$spider.velocity.x = 0;

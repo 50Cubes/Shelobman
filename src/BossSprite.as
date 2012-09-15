@@ -54,13 +54,14 @@ package
 		public var animState:String = ANIM_IDLE_DOWN;
 		
 		public var HP:Number = 5;
+		//public var HP:Number = 1;
 		public var HP_MAX:Number = 5;
 		public var isInvulerableState:Boolean = false;
 		public var isAlive:Boolean = true;
 		public var spawnByFrames:int = 100;
 		
-		public var minSpawnWebs:int = 5;
-		public var maxSpawnWebs:int = 10;
+		public var minSpawnWebs:int = 3;
+		public var maxSpawnWebs:int = 5;
 		
 		public var isActive:Boolean = false;
 		public var aggroDistance:Number = 300;
@@ -99,6 +100,9 @@ package
 				//alpha = alpha - (alpha*.5) * HP/HP_MAX;
 				if(HP <= 0 && isAlive)
 				{
+					this.stopFollowingPath(true);
+					this.velocity.x = 0;
+					this.velocity.y = 0;
 					bossDies();				
 				}else{
 					this.flicker(3.5);
