@@ -120,6 +120,9 @@ package com.spiders.states
 		private var webXStartLocations:Array = [36,58,61,39,39,38,18,46,61,54,25,26,26,33,32,29,25,31,34,29];
 		private var webYStartLocations:Array = [22,20,37,54,57,59,27,29,25,38,14,11,9,11,14,17,15,9,7,35];
 		
+		private var bossLairUL:FlxPoint = new FlxPoint(4,4);
+		private var bossLairLR:FlxPoint = new FlxPoint(19,13);
+		
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------
@@ -167,8 +170,6 @@ package com.spiders.states
 			
 			_hero = new HeroSprite(HERO_START_POINT.x, HERO_START_POINT.y);
 			add(_hero);
-			
-
 			
 			var openTiles:Array = _map.getTileCoords(0);
 
@@ -245,13 +246,25 @@ package com.spiders.states
 			_fadeToWhiteSprite.visible = false;
 			add(_fadeToWhiteSprite);
 			
+			/////
+			hack();
+			/////
+			
 		}
 		private function hack():void
 		{
 			//Boss battle start point
 			HERO_START_POINT = new FlxPoint(11 * TILE_WIDTH, 9 * TILE_HEIGHT);
+			_hero.x = HERO_START_POINT.x;
+			_hero.y = HERO_START_POINT.y;
 			_hero.canFire = true;
 			_statusBar.showPotion(true);
+			
+			_darkFilter.x = -100
+			_darkFilter.y = -25;
+			_darkFilter.scale = new FlxPoint(4.5, 4.5);
+			_darkFilter.alpha = .75;
+			_hero.canSee = true;
 		}
 		private function initItems():void
 		{
@@ -350,13 +363,49 @@ package com.spiders.states
 			{
 				var spawns:int = Util.randInclusive(1, 3);
 				var spawnSpider:SpiderSprite;
-				for (var i:int = 0; i < spawns; i++)
+				var i:int;
+				for (i = 0; i < spawns; i++)
 				{
-					spawnSpider = new SpiderSprite(_bossSprite.x + _bossSprite.width * 0.5, _bossSprite.y + _bossSprite.health * 0.5, null, 300, 500);
+					var randX:Number = Math.random() * TILE_WIDTH * 2 - TILE_WIDTH;
+					var randY:Number = Math.random() * TILE_HEIGHT * 2 - TILE_HEIGHT;
+					
+					spawnSpider = new SpiderSprite(_bossSprite.x + _bossSprite.width * 0.5 + randX, _bossSprite.y + _bossSprite.health * 0.5 + randY, null, 300, 500);
 					_spiders.add(spawnSpider);
 					add(spawnSpider);
-					
 				}
+				
+				var webSpawns:int = Util.randInclusive(_bossSprite.minSpawnWebs, _bossSprite.maxSpawnWebs);
+				var spawnWeb:WebTile;
+				for(i=0 ; i<webSpawns ; i++){
+					var randomTileX:int = Util.randInclusive(bossLairUL.x, bossLairLR.x);
+					var randomTileY:int = Util.randInclusive(bossLairUL.y, bossLairLR.y);
+					
+					spawnWeb = new WebTile(randomTileX * TILE_WIDTH, randomTileY * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+					if(spawnWeb.overlaps(_hero)){
+						//that's bad, don't trap him in place, just continue
+						continue;
+					}
+					if(spawnWeb.overlaps(_webGroup)){
+						//Don't put double webs
+						continue;
+					}
+					this._webGroup.add(spawnWeb);
+					this.add(spawnWeb);
+				}
+			}
+			
+			if(_bossSprite.isActive && _bossSprite.isAlive){
+				//Move around randomly!
+				if(_bossSprite.pathSpeed == 0){
+					var rand:int = Math.floor(Math.random() * BossSprite.RANDOM_X_TILE_DESTINATION.length);
+					var randXTile:int = int(BossSprite.RANDOM_X_TILE_DESTINATION[rand]);
+					var randYTile:int = int(BossSprite.RANDOM_Y_TILE_DESTINATION[rand]);
+					
+					var bossPath:FlxPath = _map.findPath(new FlxPoint(_bossSprite.x + _bossSprite.width/2, _bossSprite.y + _bossSprite.height/2),
+						new FlxPoint(randXTile * TILE_WIDTH, randYTile * TILE_HEIGHT));
+					_bossSprite.followPath(bossPath);
+				}
+				
 			}
 			
 			if(!_bossSprite.isAlive){
