@@ -741,6 +741,7 @@ package com.spiders.states
 			_hero.x = $pitSprite.x + ($pitSprite.width - _hero.width)/2;
 			_hero.y = $pitSprite.y + ($pitSprite.height + _hero.height)/2;
 			_hero.isAlive = false;
+			SoundManager.playHeroDying();
 		}
 		
 		private function onBossInFire($boss:BossSprite, $fire:FlxSprite):void{

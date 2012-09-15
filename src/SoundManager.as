@@ -127,6 +127,7 @@ package
 			{
 				_musicBackground = new FlxSound();
 				_musicBackground.loadEmbedded(_musicBackgroundClip, true, true);
+				_musicBackground.volume = .5;
 			}
 			
 			_musicBackground.play();
