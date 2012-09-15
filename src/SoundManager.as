@@ -102,6 +102,30 @@ package
 		//--------------------------------------
 		// PUBLIC METHODS
 		//--------------------------------------
+		public static function stopAll():void{
+			if(_effectFire != null){
+				_effectFire.stop();
+			}
+			if(_effectJumping != null){
+				_effectJumping.stop();
+			}
+			if(_musicBackground != null){
+				_musicBackground.stop();
+			}
+			if(_musicBoss != null){
+				_musicBoss.stop();
+			}
+			if(_effectItemPickup != null){
+				_effectItemPickup.stop();
+			}
+			if(_effectHeroDyingEffect != null){
+				_effectHeroDyingEffect.stop();
+			}
+			if(_effectSpiderHissing != null){
+				_effectSpiderHissing.stop();
+			}
+		}
+		
 		public static function playFire():void
 		{
 			if(_effectFire == null)

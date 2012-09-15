@@ -261,6 +261,7 @@ package com.spiders.states
 		}
 		private function hack():void
 		{
+			_fadeToWhite = true;
 			//Boss battle start point
 			HERO_START_POINT = new FlxPoint(11 * TILE_WIDTH, 11 * TILE_HEIGHT);
 			_hero.x = HERO_START_POINT.x;
