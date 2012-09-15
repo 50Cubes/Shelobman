@@ -43,6 +43,9 @@ package
 		public static const ANIM_DEATH:String = "idle_death";
 		public static const DEATH_FRAMES:Array = [12,13,14,15,16,17,18,19];
 		
+		public static const RANDOM_X_TILE_DESTINATION:Array = [6,8,15,15,12];
+		public static const RANDOM_Y_TILE_DESTINATION:Array = [7,11,5,11,9];
+		
 		//--------------------------------------
 		// PUBLIC VARIABLES
 		//--------------------------------------
@@ -55,6 +58,9 @@ package
 		public var isInvulerableState:Boolean = false;
 		public var isAlive:Boolean = true;
 		public var spawnByFrames:int = 100;
+		
+		public var minSpawnWebs:int = 5;
+		public var maxSpawnWebs:int = 10;
 		
 		public var isActive:Boolean = false;
 		public var aggroDistance:Number = 300;

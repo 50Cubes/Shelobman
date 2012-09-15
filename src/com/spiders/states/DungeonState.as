@@ -247,7 +247,7 @@ package com.spiders.states
 			add(_fadeToWhiteSprite);
 			
 			/////
-			hack();
+			//hack();
 			/////
 			
 		}
