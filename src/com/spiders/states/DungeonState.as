@@ -269,7 +269,7 @@ package com.spiders.states
 				spider.canPossiblyDropHealthGlobe(0.5);
 				add(spider);
 			}
-
+			_hero.increaseMaxHPBy(5);
 			_darkFilter.x = -100
 			_darkFilter.y = -25;
 			_darkFilter.scale = new FlxPoint(4.5, 4.5);
@@ -761,7 +761,7 @@ package com.spiders.states
 			$item.kill();
 			if($item is HeartItemSprite)
 			{
-				_hero.raiseMaxHPBy(($item as HeartItemSprite).health);
+				_hero.increaseMaxHPBy(($item as HeartItemSprite).health);
 				_statusBar.updateHealth(_hero.HP);
 				message.push("I feel stronger!");
 			}
