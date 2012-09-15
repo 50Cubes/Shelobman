@@ -273,7 +273,7 @@ package com.spiders.states
 				
 				var spider:SpiderSprite = new SpiderSprite(HERO_START_POINT.x, HERO_START_POINT.y + TILE_HEIGHT*2);
 				_spiders.add(spider);
-				spider.canPossiblyDropHealthGlobe(0.5);
+				spider.canPossiblyDropHealthGlobe(0.3);
 				add(spider);
 			}
 			_hero.increaseMaxHPBy(5);
