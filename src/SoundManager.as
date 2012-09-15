@@ -152,7 +152,7 @@ package
 			if(_effectItemPickup == null)
 			{
 				_effectItemPickup = new FlxSound();
-				_effectItemPickup.loadEmbedded(_itemPickup, true, true);
+				_effectItemPickup.loadEmbedded(_itemPickup, false, true);
 			}
 			_effectItemPickup.play();
 		}
