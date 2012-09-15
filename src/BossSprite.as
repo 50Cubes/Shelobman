@@ -55,6 +55,10 @@ package
 		public var isInvulerableState:Boolean = false;
 		public var isAlive:Boolean = true;
 		public var spawnByFrames:int = 100;
+		
+		public var isActive:Boolean = false;
+		public var aggroDistance:Number = 300;
+		
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------

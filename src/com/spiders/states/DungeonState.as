@@ -132,7 +132,7 @@ package com.spiders.states
 			initItems();
 			var openTiles:Array = _map.getTileCoords(0);
 
-			_bossSprite = new BossSprite(100, 100);
+			_bossSprite = new BossSprite(1230, 100);
 			add(_bossSprite);
 			
 			_spiders = new FlxGroup();
@@ -212,8 +212,18 @@ package com.spiders.states
 			//FlxG.worldBounds = new FlxRect(_hero.x - 128, _hero.y - 128, Util.STAGE_WIDTH, Util.STAGE_HEIGHT);
 			//trace("worldBounds -- " + FlxG.worldBounds.x + " " + FlxG.worldBounds.y);
 			
-			
-			if(_bossSprite.isAlive && _upateCounter % _bossSprite.spawnByFrames == 0)
+			if(_bossSprite.isActive == false)
+			{
+				var a:Number = _bossSprite.x - _hero.x;
+				var b:Number = _bossSprite.y - _hero.y;
+				var pythagorean:Number = Math.sqrt(a*a + b*b) ;
+				
+				if(pythagorean < _bossSprite.aggroDistance)
+				{
+					_bossSprite.isActive = true;
+				}
+			}
+			else if(_bossSprite.isActive == true && _bossSprite.isAlive && _upateCounter % _bossSprite.spawnByFrames == 0)
 			{
 				var spawns:int = Util.randInclusive(1, 3);
 				var spider:SpiderSprite;
@@ -225,6 +235,7 @@ package com.spiders.states
 					
 				}
 			}
+			
 			
 			updateAndCleanupDeadSpiders();
 			
