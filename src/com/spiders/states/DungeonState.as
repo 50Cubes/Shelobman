@@ -360,7 +360,7 @@ package com.spiders.states
 				if(_fadeToWhiteSprite.alpha >= 1){
 					_fadeToWhite = false;
 					trace("congratulations!");
-					FlxG.switchState(new CreditsState());
+					FlxG.switchState(new VictoryState());
 				}
 			}
 			
