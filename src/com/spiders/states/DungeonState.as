@@ -194,6 +194,8 @@ package com.spiders.states
 				
 				/////
 			
+			
+			//THIS WORKS:
 			_darkFilter = new DarkFilter(-TILE_WIDTH/4 - 5, 0);
 			_darkFilter.scale = new FlxPoint(1.2, 1.2);
 			add(_darkFilter);
@@ -665,7 +667,11 @@ package com.spiders.states
 			else if ($item is CandleItemSprite)
 			{
 				_statusBar.showCandle(true);
-				this._darkFilter.visible = false;
+				//this._darkFilter.visible = false;
+				_darkFilter.x = -100
+				_darkFilter.y = -25;
+				_darkFilter.scale = new FlxPoint(4.5, 4.5);
+				_darkFilter.alpha = .75;
 				_hero.canSee = true;
 				message.push("I can see!");
 			}
