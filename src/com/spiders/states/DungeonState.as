@@ -246,11 +246,23 @@ package com.spiders.states
 			_fadeToWhiteSprite.visible = false;
 			add(_fadeToWhiteSprite);
 			
+			
+			// hacking
+			hack();
 		}
 		private function hack():void
 		{
 			_hero.canFire = true;
 			_statusBar.showPotion(true);
+			
+			for (var i:int = 0; i < 10; i++)
+			{
+				
+				var spider:SpiderSprite = new SpiderSprite(HERO_START_POINT.x, HERO_START_POINT.y + TILE_HEIGHT*2);
+				_spiders.add(spider);
+				spider.canPossiblyDropHealthGlobe(0.5);
+				add(spider);
+			}
 		}
 		private function initItems():void
 		{
@@ -334,6 +346,7 @@ package com.spiders.states
 			//FlxG.worldBounds = new FlxRect(_hero.x - 128, _hero.y - 128, Util.STAGE_WIDTH, Util.STAGE_HEIGHT);
 			//trace("worldBounds -- " + FlxG.worldBounds.x + " " + FlxG.worldBounds.y);
 			
+			// boss becomes active
 			if(_bossSprite.isActive == false)
 			{
 				var a:Number = _bossSprite.x - _hero.x;
@@ -345,6 +358,7 @@ package com.spiders.states
 					_bossSprite.isActive = true;
 				}
 			}
+			// boss starts spawning
 			else if(_bossSprite.isActive == true && _bossSprite.isAlive && _updateCounter % _bossSprite.spawnByFrames == 0)
 			{
 				var spawns:int = Util.randInclusive(1, 3);
@@ -352,6 +366,7 @@ package com.spiders.states
 				for (var i:int = 0; i < spawns; i++)
 				{
 					spawnSpider = new SpiderSprite(_bossSprite.x + _bossSprite.width * 0.5, _bossSprite.y + _bossSprite.health * 0.5, null, 300, 500);
+					spawnSpider.canPossiblyDropHealthGlobe(0.5);		
 					_spiders.add(spawnSpider);
 					add(spawnSpider);
 					
@@ -674,6 +689,12 @@ package com.spiders.states
 			
 			$spider.play(SpiderSprite.ANIM_FIRE_DEATH, true);
 			
+			if($spider.canDropHealthGlobe == true )
+			{
+				var healthGlobe:HealthGlobe = new HealthGlobe($spider.x, $spider.y);
+				_items.add(healthGlobe);
+				add(healthGlobe);
+			}
 			_spiders.remove($spider, true);
 		}
 		
@@ -713,6 +734,11 @@ package com.spiders.states
 				_hero.canFire = true;
 				_statusBar.showPotion(true);
 				message.push("I have a weapon! (Press F to throw fire)");
+			}
+			else if($item is HealthGlobe)
+			{
+				_hero.healHPBy(($item as HealthGlobe).healPower);
+				_statusBar.updateHealth(_hero.HP);
 			}
 			
 			_items.remove($item, true);

@@ -67,6 +67,10 @@ package com.spiders.monsters
 		public var giveupDistance:Number = 300;
 		public var isAggro:Boolean = false;
 		private var _checkDelay:Number = SpiderSprite.CHECK_DELAY_MAX;
+		
+		
+		public var canDropHealthGlobe:Boolean = false;
+		
 		//--------------------------------------
 		// CONSTRUCTOR
 		//--------------------------------------
@@ -87,6 +91,14 @@ package com.spiders.monsters
 			this.addAnimation(ANIM_FIRE_DEATH, FIRE_DEATH_FRAMES, 5, false);
 			
 			spawningPosition = new FlxPoint(this.x + this.width/2, this.y + this.height/2);// Util.tileToCoord(Util.coordToTile(new FlxPoint(x, y)));
+		}
+		public function canPossiblyDropHealthGlobe(percentage:Number):void
+		{
+			var dropChance:Number = Util.randInclusive(0, 1);
+			if(dropChance < percentage)
+			{
+				canDropHealthGlobe = true;
+			}
 		}
 		public function doneDelay():Boolean
 		{

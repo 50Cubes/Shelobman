@@ -42,6 +42,7 @@ package com.spiders.hero
 		public static const ANIM_JUMP_LEFT:String = "jump left";
 		public static const JUMP_LEFT_FRAMES:Array = [19];
 		
+		public static const ABSOLUTE_HP_MAX:int = 4;
 		
 		//--------------------------------------
 		// VARIABLES
@@ -107,8 +108,22 @@ package com.spiders.hero
 		}
 		public function raiseMaxHPBy(hp:int):void
 		{
-			HP_MAX += hp;
-			this.HP = HP_MAX;
+			if(HP_MAX <= ABSOLUTE_HP_MAX)
+			{
+				HP_MAX += hp;
+				this.HP = HP_MAX;	
+			}
+			else if(hp < HP_MAX)
+			{
+				this.HP += hp;
+			}
+		}
+		public function healHPBy(hp:int):void
+		{
+			if(hp < HP_MAX)
+			{
+				this.HP += hp;
+			}
 		}
 		public function heroDiesAnimation():void
 		{
