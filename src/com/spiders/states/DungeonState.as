@@ -59,6 +59,8 @@ package com.spiders.states
 		private var _upateCounter:int = 0;
 		private var _updateFrequency:int = FlxG.framerate;
 		
+		private var _pitGroup:FlxGroup;
+		
 		private var _spidersDeathCount:Dictionary = new Dictionary();
 		
 		//private var _firePowerup:FirePowerup;
@@ -99,7 +101,29 @@ package com.spiders.states
 			
 			_map = new DungeonMap();
 			_map.loadMap(new _dataMap, _imgTiles, TILE_WIDTH, TILE_HEIGHT, FlxTilemap.OFF, 0, 0, 1);
+			_map.setTileProperties(DungeonMap.PIT, FlxObject.NONE);
+			_map.setTileProperties(DungeonMap.SPIKE_PIT, FlxObject.NONE);
+			
 			add(_map);
+			
+			this._pitGroup = new FlxGroup();
+			for (var ty:int = 0; ty < _map.heightInTiles; ty++)
+			{
+				for (var tx:int = 0; tx < _map.widthInTiles; tx++)
+				{
+					var tile:uint = _map.getTile(tx, ty);
+					if (tile == DungeonMap.PIT || tile == DungeonMap.SPIKE_PIT)
+					{
+						var newPit:FlxSprite = new FlxSprite(TILE_WIDTH * tx + 10, TILE_HEIGHT * ty + 10);
+						newPit.makeGraphic(TILE_WIDTH - 20, TILE_HEIGHT - 20, 0x000000);
+						add(newPit);
+						_pitGroup.add(newPit);
+					}
+				}
+			}
+			
+			
+			add(_pitGroup);
 			
 			_hero = new HeroSprite(HERO_START_POINT.x, HERO_START_POINT.y);
 			add(_hero);
@@ -188,6 +212,7 @@ package com.spiders.states
 			
 			if(_hero.isAlive && !_hero.isJumping){
 				FlxG.overlap(_hero, _fires, onHeroInFire);
+				FlxG.overlap(_hero, _pitGroup, fallIntoPit);
 			}
 			
 			_statusBar.updateHealth(_hero.HP);
@@ -429,6 +454,7 @@ package com.spiders.states
 		}
 		
 		private function onMapCollision($map:DungeonMap, $hero:HeroSprite):void{
+			/*
 			//Fuck it, just look at the tile i think they're going to
 			var destinyTile:FlxPoint = this.getTileCoordInFrontOfHero();
 			var destinyType:uint = _map.getTile(destinyTile.x, destinyTile.y);
@@ -440,6 +466,13 @@ package com.spiders.states
 				_hero.y = destinyTile.y * TILE_HEIGHT + (TILE_HEIGHT + _hero.height)/2;
 				_hero.isAlive = false;
 			}
+			*/
+		}
+		
+		private function fallIntoPit($hero:HeroSprite, $pitSprite:FlxSprite):void{
+			_hero.x = $pitSprite.x + ($pitSprite.width - _hero.width)/2;
+			_hero.y = $pitSprite.y + ($pitSprite.height + _hero.height)/2;
+			_hero.isAlive = false;
 		}
 		
 		private function onSpidersInFire($spider:SpiderSprite, $fire:FlxSprite):void{
@@ -451,7 +484,6 @@ package com.spiders.states
 			$spider.autoIdle = false;
 			
 			$spider.play(SpiderSprite.ANIM_FIRE_DEATH, true);
-			//$spider.kill();
 			
 			_spiders.remove($spider, true);
 		}

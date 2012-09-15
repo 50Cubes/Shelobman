@@ -184,7 +184,7 @@ package com.spiders.hero
 					this.y = _jumpStartWorldPoint.y + (now - _jumpStartTime)/JUMP_DURATION * _jumpDiffPoint.y + yJumpOffset;
 					this.x = _jumpStartWorldPoint.x + (now - _jumpStartTime)/JUMP_DURATION * _jumpDiffPoint.x;
 					*/
-					this.velocity.y = _jumpDiffPoint.y / JUMP_DURATION + yVelOffset;
+					this.velocity.y = _jumpDiffPoint.y / JUMP_DURATION * 1000 + yVelOffset;
 					this.velocity.x = _jumpDiffPoint.x / JUMP_DURATION * 1000;
 				}
 			}
