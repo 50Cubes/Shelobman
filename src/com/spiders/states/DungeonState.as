@@ -318,6 +318,17 @@ package com.spiders.states
 					_hero.velocity.x = HeroSprite.RUN_SPEED;
 				}else{
 					_hero.velocity.x = _hero.velocity.y = 0;
+					
+					//Look for little keyboard taps to choose direction
+					if(FlxG.keys.justPressed("W") || FlxG.keys.justReleased("W")){
+						_hero.orientation = WalkingDirectionalCharacter.UP;
+					}else if(FlxG.keys.justPressed("A") || FlxG.keys.justReleased("A")){
+						_hero.orientation = WalkingDirectionalCharacter.LEFT;
+					}else if(FlxG.keys.justPressed("S") || FlxG.keys.justReleased("S")){
+						_hero.orientation = WalkingDirectionalCharacter.DOWN;
+					}else if(FlxG.keys.justPressed("D") || FlxG.keys.justReleased("D")){
+						_hero.orientation = WalkingDirectionalCharacter.RIGHT;
+					}
 				}
 				_hero.acceleration.x = _hero.acceleration.y = 0;
 				_hero.drag.x = _hero.drag.y = 0;
