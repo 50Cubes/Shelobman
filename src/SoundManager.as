@@ -52,16 +52,41 @@ package
 		//--------------------------------------
 		// PRIVATE VARIABLES
 		//--------------------------------------
-		[Embed(source = 'assets/LOZ_Die.mp3')]
+		[Embed(source = 'assets/sounds/LOZ_Die.mp3')]
 		private static var _linkDieClip:Class;
 		
 		[Embed(source = 'assets/sounds/spider_tarantula_walk_on_leaves.mp3')]
 		private static var _spiderHiss:Class;
 		
+		[Embed(source = 'assets/sounds/LOZ_Die.mp3')]
+		private static var _fire:Class;
+
+		[Embed(source = 'assets/sounds/LOZ_Die.mp3')]
+		private static var _jumping:Class;
+
+		[Embed(source = 'assets/sounds/LOZ_Die.mp3')]
+		private static var _itemPickup:Class;
 		
+		[Embed(source = 'assets/sounds/LOZ_Die.mp3')]
+		private static var _jumpingEffect:Class;
+		
+		[Embed(source = 'assets/sounds/LOZ_Die.mp3')]
+		private static var _musicBackgroundClip:Class;
+		
+		[Embed(source = 'assets/sounds/LOZ_Die.mp3')]
+		private static var _musicBossClip:Class;
+		
+		// effects
 		
 		private static var _effectHeroDyingEffect:FlxSound;
 		private static var _effectSpiderHissing:FlxSound;
+		
+		
+		// boss
+		
+		private static var _musicBackground:FlxSound;
+		private static var _musicBoss:FlxSound;
+		
 		
 		
 		//--------------------------------------
@@ -72,6 +97,31 @@ package
 		//--------------------------------------
 		// PUBLIC METHODS
 		//--------------------------------------
+
+		public static function playBossMusic():void
+		{
+			if(_musicBackground == null)
+			{
+				_musicBackground = new FlxSound();
+				_musicBackground.loadEmbedded(_linkDieClip, true, true);
+			}
+			
+			_musicBackground.play();
+		}
+		public static function playBackgroundMusic():void
+		{
+			if(_musicBackground)
+			{
+				_musicBackground.stop();
+				_musicBackground.kill();
+			}
+			if(_musicBoss == null)
+			{
+				_musicBoss = new FlxSound();
+				_musicBoss.loadEmbedded(_linkDieClip, true, true);
+			}
+			_musicBoss.play();
+		}
 		
 		public static function playHeroDying():void
 		{
@@ -88,7 +138,6 @@ package
 			{
 				_effectSpiderHissing = new FlxSound();
 				_effectSpiderHissing.loadEmbedded(_spiderHiss, false, true);
-				_effectSpiderHissing.volume = 100;
 			}
 			_effectSpiderHissing.play();
 			

@@ -249,7 +249,10 @@ package com.spiders.states
 			_fadeToWhiteSprite.visible = false;
 			add(_fadeToWhiteSprite);
 			
-
+			SoundManager.playBackgroundMusic();
+			
+			
+			
 			// hacking
 			hack();
 			/////
@@ -374,6 +377,7 @@ package com.spiders.states
 				if(pythagorean < _bossSprite.aggroDistance)
 				{
 					_bossSprite.isActive = true;
+					SoundManager.playBossMusic();
 				}
 			}
 			// boss starts spawning
