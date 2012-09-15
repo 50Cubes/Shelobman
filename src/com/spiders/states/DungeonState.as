@@ -36,7 +36,12 @@ package com.spiders.states
 		public static const MAX_FIRES:int = 3;
 		
 		//public static var HERO_START_POINT:FlxPoint = new FlxPoint(2 * TILE_WIDTH, 2 * TILE_HEIGHT);
-		public static var HERO_START_POINT:FlxPoint = new FlxPoint(30 * TILE_WIDTH, 34 * TILE_HEIGHT);
+		//public static var HERO_START_POINT:FlxPoint = new FlxPoint(30 * TILE_WIDTH, 34 * TILE_HEIGHT);
+		
+		//DEBUG: For testing boss fight
+		public static var HERO_START_POINT:FlxPoint = new FlxPoint(11 * TILE_WIDTH, 9 * TILE_HEIGHT);
+		
+		public static var BOSS_START_TILE:FlxPoint = new FlxPoint(10, 7);
 		
 		//--------------------------------------
 		// VARIABLES
@@ -99,8 +104,8 @@ package com.spiders.states
 		private var lampXLocations:Array = [27, 42, 44];
 		private var lampYLocations:Array = [48, 50, 28];
 		
-		private var bootXLocations:Array = [9, 47, 37];
-		private var bootYLocations:Array = [33, 33, 44];
+		private var bootXLocations:Array = [9, 47, 42];
+		private var bootYLocations:Array = [33, 33, 50];
 		
 		private var firePotionXLocations:Array = [18, 39, 56];
 		private var firePotionYLocations:Array = [24, 61, 36];
@@ -158,7 +163,7 @@ package com.spiders.states
 			
 			var openTiles:Array = _map.getTileCoords(0);
 
-			_bossSprite = new BossSprite(1230, 100);
+			_bossSprite = new BossSprite(BOSS_START_TILE.x * TILE_WIDTH, BOSS_START_TILE.y * TILE_HEIGHT);
 			add(_bossSprite);
 			
 			_spiders = new FlxGroup();
@@ -337,6 +342,7 @@ package com.spiders.states
 			if(_hero.isAlive && !_hero.isJumping){
 				FlxG.overlap(_hero, _fires, onHeroInFire);
 				FlxG.overlap(_hero, _pitGroup, fallIntoPit);
+				FlxG.overlap(_hero, this._bossSprite, bossBiteHero);
 			}
 			
 			_statusBar.updateHealth(_hero.HP);
@@ -481,6 +487,13 @@ package com.spiders.states
 				spiderGoHome($spider);
 			}
 		}
+		
+		private function bossBiteHero($hero:HeroSprite, $boss:BossSprite){
+			if($hero.isAlive){
+				$hero.gotHit(1);
+			}
+		}
+		
 		private function handleSpiderAggroAndPathing():void
 		{
 			if(!_hero.isAlive){
