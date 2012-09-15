@@ -36,10 +36,10 @@ package com.spiders.states
 		public static const MAX_FIRES:int = 3;
 		
 		//public static var HERO_START_POINT:FlxPoint = new FlxPoint(2 * TILE_WIDTH, 2 * TILE_HEIGHT);
-		//public static var HERO_START_POINT:FlxPoint = new FlxPoint(30 * TILE_WIDTH, 34 * TILE_HEIGHT);
+		public static var HERO_START_POINT:FlxPoint = new FlxPoint(30 * TILE_WIDTH, 34 * TILE_HEIGHT);
 		
 		//DEBUG: For testing boss fight
-		public static var HERO_START_POINT:FlxPoint = new FlxPoint(11 * TILE_WIDTH, 9 * TILE_HEIGHT);
+		//public static var HERO_START_POINT:FlxPoint = new FlxPoint(11 * TILE_WIDTH, 9 * TILE_HEIGHT);
 		
 		public static var BOSS_START_TILE:FlxPoint = new FlxPoint(10, 7);
 		
@@ -187,7 +187,7 @@ package com.spiders.states
 			
 			//Add spiders
 			for(var i:int=0 ; i<spiderXStartLocations.length ; i++){
-				spider = new SpiderSprite(spiderXStartLocations[i] * TILE_WIDTH, spiderYStartLocations[i] * TILE_HEIGHT);
+				spider = new SpiderSprite(spiderXStartLocations[i] * TILE_WIDTH + 16, spiderYStartLocations[i] * TILE_HEIGHT + 8);
 				_spiders.add(spider);
 				add(spider);
 			}
