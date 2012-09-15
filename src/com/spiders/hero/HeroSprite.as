@@ -62,7 +62,7 @@ package com.spiders.hero
 		
 		public var HP:int = 1;
 		public var HP_MAX:int = 1;
-		public var HP_REGEN:Number = 500;
+		public var HP_REGEN:Number = 1800;
 		public var isInvulerableState:Boolean = false;
 		private var _invulnerableTimer:FlxTimer  = new FlxTimer();
 		public var isAlive:Boolean = true;
