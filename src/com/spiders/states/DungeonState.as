@@ -160,6 +160,8 @@ package com.spiders.states
 			add(_statusBar);
 
 			FlxG.camera.follow(_hero);
+			FlxG.worldBounds = new FlxRect(0, 0, _map.width, _map.height);
+			
 		}
 		private function initItems():void
 		{
@@ -202,6 +204,8 @@ package com.spiders.states
 		
 		override public function update():void{
 			super.update();
+			//FlxG.worldBounds = new FlxRect(_hero.x - 128, _hero.y - 128, Util.STAGE_WIDTH, Util.STAGE_HEIGHT);
+			//trace("worldBounds -- " + FlxG.worldBounds.x + " " + FlxG.worldBounds.y);
 			
 			updateAndCleanupDeadSpiders();
 			
@@ -313,6 +317,7 @@ package com.spiders.states
 				//Find path to goal
 				//if (spider.animState == SpiderSprite.ANIM_IDLE)
 				FlxG.collide(spider, _spiders);
+				FlxG.collide(spider, _map);
 				FlxG.overlap(spider, _hero, spiderBiteHero);
 				var path:FlxPath;
 				
