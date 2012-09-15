@@ -49,6 +49,7 @@ package com.spiders.hero
 		[Embed(source = 'assets/SpriteHero_Final.png')]
 		private var _heroAsset:Class;
 		
+		public var canSee:Boolean = false;
 		public var canFire:Boolean = false;
 		public var canJump:Boolean = false;
 		public var isJumping:Boolean = false;

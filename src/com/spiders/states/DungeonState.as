@@ -4,7 +4,9 @@ package com.spiders.states
 	import com.spiders.characters.WalkingDirectionalCharacter;
 	import com.spiders.hero.HeroSprite;
 	import com.spiders.map.DungeonMap;
+	import com.spiders.misc.DarkFilter;
 	import com.spiders.misc.Fire;
+	import com.spiders.misc.FlxDialog;
 	import com.spiders.monsters.SpiderSprite;
 	import com.spiders.powerups.FirePowerup;
 	import com.spiders.powerups.JumpPowerup;
@@ -33,7 +35,8 @@ package com.spiders.states
 		public static const AGGRO_DISTANCE:Number = 512;
 		public static const MAX_FIRES:int = 3;
 		
-		public static var HERO_START_POINT:FlxPoint = new FlxPoint(2 * TILE_WIDTH, 2 * TILE_HEIGHT);
+		//public static var HERO_START_POINT:FlxPoint = new FlxPoint(2 * TILE_WIDTH, 2 * TILE_HEIGHT);
+		public static var HERO_START_POINT:FlxPoint = new FlxPoint(30 * TILE_WIDTH, 34 * TILE_HEIGHT);
 		
 		//--------------------------------------
 		// VARIABLES
@@ -46,7 +49,8 @@ package com.spiders.states
 		/*
 		* Embed map data
 		*/
-		[Embed(source = 'assets/pathfinding_map.txt', mimeType = "application/octet-stream")]
+		//[Embed(source = 'assets/pathfinding_map.txt', mimeType = "application/octet-stream")]
+		[Embed(source = 'assets/tilemap_final.csv', mimeType = "application/octet-stream")]
 		private var _dataMap:Class;
 		
 		private var _map:DungeonMap;
@@ -63,6 +67,11 @@ package com.spiders.states
 		private var _pitGroup:FlxGroup;
 		
 		private var _spidersDeathCount:Dictionary = new Dictionary();
+		
+		private var _darkFilter:DarkFilter;
+		
+		private var _dialogBox:FlxDialog;
+		private var _firstSpiderEncountered:Boolean = false;
 		
 		//private var _firePowerup:FirePowerup;
 		private var _fires:FlxGroup;
@@ -129,7 +138,9 @@ package com.spiders.states
 			_hero = new HeroSprite(HERO_START_POINT.x, HERO_START_POINT.y);
 			add(_hero);
 			
-			initItems();
+			
+			
+			
 			var openTiles:Array = _map.getTileCoords(0);
 
 			_bossSprite = new BossSprite(1230, 100);
@@ -155,8 +166,13 @@ package com.spiders.states
 				add(spider);
 				
 				//spider = new SpiderSprite(Util.randInclusive(100,Util.STAGE_WIDTH-100), Util.randInclusive(100,Util.STAGE_HEIGHT-100));
-			
 			}
+			
+			_darkFilter = new DarkFilter(-TILE_WIDTH/4, 0);
+			_darkFilter.scale = new FlxPoint(1.2, 1.2);
+			add(_darkFilter);
+			
+			initItems();
 			
 			_fires = new FlxGroup();
 			
@@ -166,34 +182,29 @@ package com.spiders.states
 			FlxG.camera.follow(_hero);
 			FlxG.worldBounds = new FlxRect(0, 0, _map.width, _map.height);
 			
+			//Show a dialog box
+			_dialogBox = new FlxDialog();
+			_dialogBox.message = ["Where am I? Why is it so dark?", "I need to find a light source!"];
+			this.add(_dialogBox);
+			
 		}
 		private function initItems():void
 		{
 			_items = new FlxGroup();
 
-			var floatingItem:ShoeItemSprite = new ShoeItemSprite(64,150,_bootItem);
+			var floatingItem:ShoeItemSprite = new ShoeItemSprite(31 * TILE_WIDTH, 34 * TILE_HEIGHT,_bootItem);
 			add(floatingItem);
 			_items.add(floatingItem);
 			
-			var candleItem:CandleItemSprite = new CandleItemSprite(64,200,_candleItem);
+			var candleItem:CandleItemSprite = new CandleItemSprite(31 * TILE_WIDTH, 35 * TILE_HEIGHT,_candleItem);
 			add(candleItem);
 			_items.add(candleItem);
 			
-			var heartItem:HeartItemSprite = new HeartItemSprite(3*TILE_WIDTH,2*TILE_HEIGHT,_heartItem);
+			var heartItem:HeartItemSprite = new HeartItemSprite(29 * TILE_WIDTH, 34 * TILE_HEIGHT,_heartItem);
 			add(heartItem);
 			_items.add(heartItem);
-//			var mbootItem:ShoeItemSprite = new ShoeItemSprite(0,90,_mbootItem);
-//			add(mbootItem);
-//			_items.add(mbootItem);
 			
-//			var torchItem:FloatingItemSprite = new FloatingItemSprite(TILE_WIDTH,2*TILE_HEIGHT,_torchItem);
-//			add(torchItem);
-//			_items.add(torchItem);
-			
-			var firebombItem:FirePowerup = new FirePowerup(3*TILE_WIDTH,4*TILE_HEIGHT,_firebombItem);
-
-			//firebombItem = new PotionItemSprite(0,150,_firebombItem);
-
+			var firebombItem:FirePowerup = new FirePowerup(29 * TILE_WIDTH, 35 * TILE_HEIGHT,_firebombItem);
 			add(firebombItem);
 			_items.add(firebombItem);
 			
@@ -254,7 +265,7 @@ package com.spiders.states
 			
 			
 			if(_hero.isAlive){
-				FlxG.collide(_map, _hero, onMapCollision);
+				FlxG.collide(_map, _hero);
 				FlxG.overlap(_hero, _items, onItemPickup);
 				
 				if(_upateCounter % _updateFrequency == 0)
@@ -381,6 +392,17 @@ package com.spiders.states
 				try{
 					if(isWithinAggroHero == true && _hero.isAlive)
 					{
+						//Update the dialogue.
+						if(_firstSpiderEncountered == false){
+							var spiderMessage:Array = ["What's that sound? That... skittering..."];
+							if(_hero.canFire){
+								spiderMessage.push("Kill it with fire!");
+							}else{
+								spiderMessage.push("I have nothing to fight it with yet!");
+							}
+							_firstSpiderEncountered = true;
+						}
+						
 						trace("if isWithinAggroHero");
 						path = _map.findPath(new FlxPoint(spider.x + spider.width / 2, spider.y + spider.height / 2), new FlxPoint(target.x + target.width / 2, target.y + target.height / 2));
 						
@@ -500,22 +522,6 @@ package com.spiders.states
 			_fires.remove(fire, true);
 		}
 		
-		private function onMapCollision($map:DungeonMap, $hero:HeroSprite):void{
-			/*
-			//Fuck it, just look at the tile i think they're going to
-			var destinyTile:FlxPoint = this.getTileCoordInFrontOfHero();
-			var destinyType:uint = _map.getTile(destinyTile.x, destinyTile.y);
-
-			if(!_hero.isJumping && destinyType == DungeonMap.PIT || destinyType == DungeonMap.SPIKE_PIT){
-				//YOU LOSE! GOOD DAY, SIR!
-				//FALL INTO THE PIT YOU BASTARD!
-				_hero.x = destinyTile.x * TILE_WIDTH + (TILE_WIDTH - _hero.width)/2;
-				_hero.y = destinyTile.y * TILE_HEIGHT + (TILE_HEIGHT + _hero.height)/2;
-				_hero.isAlive = false;
-			}
-			*/
-		}
-		
 		private function fallIntoPit($hero:HeroSprite, $pitSprite:FlxSprite):void{
 			_hero.x = $pitSprite.x + ($pitSprite.width - _hero.width)/2;
 			_hero.y = $pitSprite.y + ($pitSprite.height + _hero.height)/2;
@@ -547,35 +553,61 @@ package com.spiders.states
 		}
 		
 		private function onItemPickup($hero:FlxSprite, $item:FlxSprite):void{
+			var message:Array = [];
+			
 			$item.kill();
 			if($item is HeartItemSprite)
 			{
 				_hero.raiseMaxHPBy(($item as HeartItemSprite).health);
 				_statusBar.updateHealth(_hero.HP);
+				message.push("I feel stronger!");
 			}
 			else if ($item is ShoeItemSprite)
 			{
 				_statusBar.showShoe(true);
 				_hero.canJump = true;
+				message.push("I feel lighter! (Press R to jump)");
 			}
 			else if ($item is CandleItemSprite)
 			{
 				_statusBar.showCandle(true);
+				this._darkFilter.visible = false;
+				_hero.canSee = true;
+				message.push("I can see!");
 			}
+			else if($item is FirePowerup){
+				_hero.canFire = true;
+				_statusBar.showPotion(true);
+				message.push("I have a weapon! (Press F to throw fire)");
+			}
+			/*
 			else if ($item is PotionItemSprite)
 			{
 				_statusBar.showPotion(true);
 				firebombItem.kill();
 				_hero.canFire = true;
+				message.push("I have a weapon! (Press F to throw fire)");
 			}
+			*/
+			/*
 			if($item is JumpPowerup){
 				_hero.canJump = true;
 			}
-			if($item is FirePowerup){
-				_hero.canFire = true;
-				_statusBar.showPotion(true);
-			}
+			
+			*/
 			_items.remove($item, true);
+			
+			message = message.concat(getReadinessMessage());
+			
+			this._dialogBox.message = message;
+		}
+		
+		private function getReadinessMessage():Array{
+			if(_hero.canSee && _hero.canFire && _hero.canJump && _hero.HP_MAX >= 3){
+				return ["I am ready.", "Head north to end these spiders, once and for all!"];
+			}else{
+				return ["But I am not yet ready."];
+			}
 		}
 	}
 }
