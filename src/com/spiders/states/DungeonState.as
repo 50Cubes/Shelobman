@@ -238,7 +238,7 @@ package com.spiders.states
 			
 			//Show a dialog box
 			_dialogBox = new FlxDialog();
-			_dialogBox.message = ["Where am I? Why is it so dark?", "I need to find a light source!"];
+			_dialogBox.message = ["Where am I? Why is it so dark? (Press W, A, S, D to move)", "I need to find a light source!"];
 			this.add(_dialogBox);
 			
 			this._fadeToWhiteSprite = new FlxSprite(0, 0);
