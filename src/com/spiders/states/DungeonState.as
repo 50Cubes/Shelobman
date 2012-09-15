@@ -36,7 +36,6 @@ package com.spiders.states
 		public static const AGGRO_DISTANCE:Number = 512;
 		public static const MAX_FIRES:int = 3;
 		
-		//public static var HERO_START_POINT:FlxPoint = new FlxPoint(2 * TILE_WIDTH, 2 * TILE_HEIGHT);
 		public static var HERO_START_POINT:FlxPoint = new FlxPoint(30 * TILE_WIDTH, 34 * TILE_HEIGHT);
 		
 		//DEBUG: For testing boss fight
@@ -118,8 +117,8 @@ package com.spiders.states
 		private var spiderXStartLocations:Array = [36,58,61,39,39,38,18,46,61,54,25,26,26,33,32];
 		private var spiderYStartLocations:Array = [22,20,37,54,57,59,27,29,25,38,14,11,9,11,14];
 		
-		private var webXStartLocations:Array = [36,58,61,39,39,38,18,46,61,54,25,26,26,33,32];
-		private var webYStartLocations:Array = [22,20,37,54,57,59,27,29,25,38,14,11,9,11,14];
+		private var webXStartLocations:Array = [36,58,61,39,39,38,18,46,61,54,25,26,26,33,32,29,25,31,34,29];
+		private var webYStartLocations:Array = [22,20,37,54,57,59,27,29,25,38,14,11,9,11,14,17,15,9,7,35];
 		
 		//--------------------------------------
 		// CONSTRUCTOR
@@ -249,6 +248,8 @@ package com.spiders.states
 		}
 		private function hack():void
 		{
+			//Boss battle start point
+			HERO_START_POINT = new FlxPoint(11 * TILE_WIDTH, 9 * TILE_HEIGHT);
 			_hero.canFire = true;
 			_statusBar.showPotion(true);
 		}
@@ -356,6 +357,10 @@ package com.spiders.states
 					add(spawnSpider);
 					
 				}
+			}
+			
+			if(!_bossSprite.isAlive){
+				this._fadeToWhite = true;
 			}
 			
 			

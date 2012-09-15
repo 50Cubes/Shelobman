@@ -69,9 +69,9 @@ package
 			this.loadGraphic(_bossAsset, true);
 			
 			this.offset.x = 16;
-			this.offset.y = 42;
-			this.width = 64;
-			this.height = 32;
+			this.offset.y = 16;
+			this.width = 100;
+			this.height = 100;
 			
 			this.acceleration = new FlxPoint(0, 0);
 			
@@ -94,13 +94,19 @@ package
 				if(HP <= 0 && isAlive)
 				{
 					bossDies();				
+				}else{
+					this.flicker(3.5);
 				}
-				this.flicker(1);
 			}
 		}
 		
-		private function bossDies():void
+		override public function draw():void{
+			super.draw();
 			
+			//drawDebug();
+		}
+		
+		private function bossDies():void
 		{
 			isAlive = false;
 			this.play(ANIM_DEATH);
