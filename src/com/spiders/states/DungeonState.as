@@ -631,6 +631,7 @@ package com.spiders.states
 							spider.stopFollowingPath(true);
 							spider.followPath(path);
 							spider.isAggro = true;
+							SoundManager.playSpiderHissing();
 						}
 					}
 				}else{

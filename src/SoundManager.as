@@ -55,6 +55,10 @@ package
 		[Embed(source = 'assets/LOZ_Die.mp3')]
 		private static var _linkDieClip:Class;
 		
+		[Embed(source = 'assets/sounds/spider_tarantula_hiss.mp3')]
+		private static var _spiderHiss:Class;
+		
+		
 		//--------------------------------------
 		// GETTER/SETTERS
 		//--------------------------------------
@@ -63,13 +67,20 @@ package
 		//--------------------------------------
 		// PUBLIC METHODS
 		//--------------------------------------
+		
 		public static function playHeroDying():void
 		{
 			var sound:FlxSound = new FlxSound();
 			sound.loadEmbedded(_linkDieClip, false, true);
 			sound.play();
 		}
-		
+		public static function playSpiderHissing():void
+		{
+			var sound:FlxSound = new FlxSound();
+			sound.loadEmbedded(_spiderHiss, false, true);
+			sound.play();
+		}
+
 		//--------------------------------------
 		// EVENT HANDLERS
 		//--------------------------------------
