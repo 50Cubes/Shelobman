@@ -24,7 +24,8 @@ package com.spiders.states
 		//--------------------------------------
 		// VARIABLES
 		//--------------------------------------
-		[Embed(source="assets/b35.png")]
+		//[Embed(source="assets/b35.png")]
+		[Embed(source="assets/brandsequencesheet.png")]
 		private var _brandAsset:Class;
 		
 		private var delayCount:int = 0;
@@ -45,9 +46,17 @@ package com.spiders.states
 			super.create();
 			
 			
-			var sprite:FlxSprite = new FlxSprite(0, 0, _brandAsset);
+			var sprite:FlxSprite = new FlxSprite(0, 0);
+			sprite.loadGraphic(_brandAsset, true, false, 800, 600);
+			var arr:Array = [];
+			for(var i:int=0 ; i<33 ; i++){
+				arr.push(i);
+			}
+			sprite.addAnimation("brand", arr, 20, false);
+			
 			add(sprite);
 			
+			sprite.play("brand", true);
 		}
 		
 		override public function update():void{
