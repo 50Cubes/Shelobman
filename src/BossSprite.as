@@ -43,6 +43,9 @@ package
 		public static const ANIM_DEATH:String = "idle_death";
 		public static const DEATH_FRAMES:Array = [12,13,14,15,16,17,18,19];
 		
+		public static const RANDOM_X_TILE_DESTINATION:Array = [6,8,15,15,12];
+		public static const RANDOM_Y_TILE_DESTINATION:Array = [7,11,5,11,9];
+		
 		//--------------------------------------
 		// PUBLIC VARIABLES
 		//--------------------------------------
@@ -55,6 +58,9 @@ package
 		public var isInvulerableState:Boolean = false;
 		public var isAlive:Boolean = true;
 		public var spawnByFrames:int = 100;
+		
+		public var minSpawnWebs:int = 5;
+		public var maxSpawnWebs:int = 10;
 		
 		public var isActive:Boolean = false;
 		public var aggroDistance:Number = 300;
@@ -69,9 +75,9 @@ package
 			this.loadGraphic(_bossAsset, true);
 			
 			this.offset.x = 16;
-			this.offset.y = 42;
-			this.width = 64;
-			this.height = 32;
+			this.offset.y = 16;
+			this.width = 100;
+			this.height = 100;
 			
 			this.acceleration = new FlxPoint(0, 0);
 			
@@ -94,13 +100,19 @@ package
 				if(HP <= 0 && isAlive)
 				{
 					bossDies();				
+				}else{
+					this.flicker(3.5);
 				}
-				this.flicker(1);
 			}
 		}
 		
-		private function bossDies():void
+		override public function draw():void{
+			super.draw();
 			
+			//drawDebug();
+		}
+		
+		private function bossDies():void
 		{
 			isAlive = false;
 			this.play(ANIM_DEATH);
