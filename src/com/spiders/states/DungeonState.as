@@ -58,6 +58,7 @@ package com.spiders.states
 		private var _items:FlxGroup;
 		private var _upateCounter:int = 0;
 		private var _updateFrequency:int = FlxG.framerate;
+		private var _bossSprite:BossSprite;
 		
 		private var _pitGroup:FlxGroup;
 		
@@ -130,6 +131,9 @@ package com.spiders.states
 			
 			initItems();
 			var openTiles:Array = _map.getTileCoords(0);
+
+			_bossSprite = new BossSprite(50.50);
+			add(_bossSprite);
 			
 			_spiders = new FlxGroup();
 			var spider:SpiderSprite;
@@ -213,6 +217,7 @@ package com.spiders.states
 			//FlxG.collide(this._map, this._hero);
 			
 			FlxG.overlap(_spiders, _fires, onSpidersInFire);
+			FlxG.overlap(_bossSprite, _fires, onBossInFire);
 			
 			if(_hero.isAlive && !_hero.isJumping){
 				FlxG.overlap(_hero, _fires, onHeroInFire);
@@ -480,6 +485,11 @@ package com.spiders.states
 			_hero.isAlive = false;
 		}
 		
+		private function onBossInFire($boss:BossSprite, $fire:FlxSprite):void{
+			if($boss.isAlive){
+				$boss.gotHit(1);
+			}
+		}
 		private function onSpidersInFire($spider:SpiderSprite, $fire:FlxSprite):void{
 			_spidersDeathCount[$spider] = 0;
 			
